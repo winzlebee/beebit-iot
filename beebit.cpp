@@ -1,6 +1,3 @@
-#include <opencv2/opencv.hpp>
-#include <opencv2/dnn.hpp>
-
 #ifdef BEEBIT_PI
 #include <raspicam/raspicam_cv.h>
 #endif
@@ -12,10 +9,14 @@ namespace beebit {
 
 PeopleCounter::PeopleCounter(int cameraId) {
     m_config = loadConfig();
-    cv::VideoCapture capture(cameraId);
 
     log("Loading Model");
-    cv::dnn::readNetFromDarknet(m_config->configLocation, m_config->modelLocation);
+    m_network = std::make_unique<cv::dnn::Net>(cv::dnn::readNetFromDarknet(m_config->configLocation, m_config->modelLocation));
+    m_capture = std::make_unique<cv::VideoCapture>(cameraId);
+    
+}
+
+void PeopleCounter::begin() {
 
 }
 

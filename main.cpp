@@ -2,5 +2,6 @@
 #include "beebit.h"
 
 int main(int argc, char *argv[]) {
-	beebit::PeopleCounter(0);
+	beebit::PeopleCounter peopleCounter(0);
+	peopleCounter.begin();
 }

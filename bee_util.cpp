@@ -13,7 +13,7 @@ Configuration *loadConfig() {
     static Configuration conf;
 
     std::ifstream inFile;
-    inFile.open("beebit.cfg");
+    inFile.open(CONFIG_FILE_NAME);
 
     if (!inFile) {
         log("Config file not found. Creating...");

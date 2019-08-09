@@ -1,5 +1,5 @@
 
-FILES=main.cpp beebit.cpp bee_util.cpp
+FILES=main.cpp beebit.cpp bee_util.cpp tracking/centroid_tracker.cpp
 LIBS=-lopencv_core -lopencv_videoio -lopencv_dnn -I/usr/local/include/opencv4
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
