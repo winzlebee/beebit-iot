@@ -6,10 +6,12 @@
 #include <opencv2/dnn.hpp>
 
 #include <memory>
+#include <string>
 
 namespace beebit {
 
 struct Configuration;
+class CentroidTracker;
 
 class PeopleCounter
 {
@@ -26,10 +28,22 @@ public:
     // Retrieve the current count, as detected by the camera
     int getCurrentCount();
 private:
+    void loop(cv::Mat &frame, double delta);
+
     Configuration *m_config;
 
     std::unique_ptr<cv::VideoCapture> m_capture;
     std::unique_ptr<cv::dnn::Net> m_network;
+    std::unique_ptr<CentroidTracker> m_tracker;
+
+    // Counters
+    uint32_t totalUp;
+    uint32_t totalDown;
+
+    uint32_t m_totalFrames;
+
+    std::vector<cv::Rect> m_detections;
+    std::string m_statusText;
 
     BeeCamera m_camera;
 };

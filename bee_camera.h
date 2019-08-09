@@ -3,8 +3,8 @@
 namespace beebit {
     
 struct BeeCamera {
-    int width;
-    int height;
+    int width = 800;
+    int height = 600;
 };
 
 }
