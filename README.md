@@ -3,7 +3,14 @@
 This repositroy contains all the necessary files to run the BeeBit IoT software that automatically counts individuals in a space in a number of ways.
 
 ## Instructions
+
+### Linux
 Building on *Linux* is relatively straightforward. The below instructions are designed for *debian-based distros* but they should work on any distribution.
+
+***NOTE:** Make sure you don't have OpenCV installed from the default package manager. *
+```bash
+sudo apt remove libopencv*
+```
 
 1. Download opencv **4.1.1** (the lastest version as of the time of writing) from [here](https://github.com/opencv/opencv/archive/4.1.1.zip);
 2. Use the following commands to extract the archive and install OpenCV. The default flags are fine.
