@@ -63,10 +63,12 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
 
     m_capture >> frame;
 
-    std::vector<cv::Rect> detections = m_network->getDetections(frame);
+    if (m_config->skipFrames % m_totalFrames == 0) {
+        std::vector<cv::Rect> detections = m_network->getDetections(frame);
 
-    for (const auto &rect : detections) {
-        cv::rectangle(frame, rect, rectColor, 4);
+        for (const auto &rect : detections) {
+            cv::rectangle(frame, rect, rectColor, 4);
+        }
     }
     
     cv::imshow("BeeTrack", frame);

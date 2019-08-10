@@ -7,7 +7,7 @@ This repositroy contains all the necessary files to run the BeeBit IoT software 
 ### Linux
 Building on *Linux* is relatively straightforward. The below instructions are designed for *debian-based distros* but they should work on any distribution.
 
-** Make sure you don't have OpenCV installed from the default package manager. **
+**Make sure you don't have OpenCV installed from the default package manager.**
 ```bash
 sudo apt remove libopencv*
 ```
