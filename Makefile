@@ -15,4 +15,4 @@ deps: build
 
 .PHONY : clean
 clean:
-	rm -r beetrack ./dnn
+	rm -r beetrack ./dnn beebit.cfg

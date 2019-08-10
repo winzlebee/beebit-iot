@@ -60,29 +60,39 @@ const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::
     std::vector<int> usedExisting;
     std::vector<int> usedInput;
 
-    int inIndex = 0;
-    for (const auto &inputCentroid : centroids) {
-        for (const auto &existingObject : m_objects) {
-            
-            if (contains(usedExisting, existingObject.first)) {
-                // If we've already got a marker for this centroid, then continue
-                continue;
+    // Gets the ID of the new centroid that was closest to the given centroid
+    auto getMinDistInputId = [&, centroids](const cv::Point2i &point)->std::pair<int, double> {
+        double closestDistance = INT_MAX;
+        int id = -1;
+        for (int i = 0; i < centroids.size(); i++) {
+            double dist = cv::norm(point - centroids[i]);
+            if (dist < closestDistance) {
+                closestDistance = dist;
+                id = i;
             }
-
-            const auto &existingCentroid = existingObject.second;
-
-            double distance = cv::norm(existingCentroid - inputCentroid);
-
-            if (distance > m_maxDistance) continue;
-
-            // Reset the disappeared counter and set this objects new centroid
-            m_disappearedTime[existingObject.first] = 0;
-            m_objects[existingObject.first] = inputCentroid;
-
-            usedExisting.push_back(existingObject.first);
-            usedInput.push_back(inIndex);
         }
-        inIndex++;
+        return {id, closestDistance};
+    };  
+
+    for (const auto &existingObject : m_objects) {
+        
+        if (contains(usedExisting, existingObject.first)) {
+            // If we've already got a marker for this centroid, then continue
+            continue;
+        }
+
+        const auto &existingCentroid = existingObject.second;
+
+        auto result = getMinDistInputId(existingCentroid);
+
+        if (result.second > m_maxDistance) continue;
+
+        // Reset the disappeared counter and set this objects new centroid
+        m_disappearedTime[existingObject.first] = 0;
+        m_objects[existingObject.first] = centroids[result.first];
+
+        usedExisting.push_back(existingObject.first);
+        usedInput.push_back(result.first);
     }
 
     // If there's more existing centroids than new ones
