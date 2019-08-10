@@ -32,9 +32,11 @@ private:
 
     Configuration *m_config;
 
-    std::unique_ptr<cv::VideoCapture> m_capture;
-    std::unique_ptr<cv::dnn::Net> m_network;
+    cv::VideoCapture m_capture;
+    cv::dnn::Net m_network;
     std::unique_ptr<CentroidTracker> m_tracker;
+
+    std::vector<cv::String> m_outLayerNames;
 
     // Counters
     uint32_t totalUp;

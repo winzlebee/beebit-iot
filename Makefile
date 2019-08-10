@@ -10,8 +10,8 @@ build:
 # The install target downloads all the weights and config files needed
 deps: build
 	mkdir dnn
-	wget https://pjreddie.com/media/files/yolov3.weights -O dnn/yolov3.weights
-	wget https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg -O dnn/config.cfg
+	wget https://pjreddie.com/media/files/yolov3-tiny.weights -O dnn/yolov3.weights
+	wget https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3-tiny.cfg -O dnn/config.cfg
 
 .PHONY : clean
 clean:

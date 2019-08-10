@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 
 namespace beebit {
 
@@ -21,6 +22,9 @@ struct Configuration {
 Configuration *loadConfig();
 void writeConfig(const Configuration &conf);
 
-void log(const std::string &text);
+template<typename T>
+void log(const T &text) {
+    std::cout << "BeeBit: " << text << std::endl;
+}
 
 }

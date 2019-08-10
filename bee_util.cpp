@@ -1,6 +1,5 @@
 #include "bee_util.h"
 
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -68,10 +67,6 @@ void writeConfig(const Configuration &conf) {
     
     outFile << std::endl;
 
-}
-
-void log(const std::string &text) {
-    std::cout << "BeeBit: " << text << std::endl;
 }
 
 }
