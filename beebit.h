@@ -1,6 +1,5 @@
 #pragma once
 
-#include "bee_camera.h"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
@@ -12,6 +11,7 @@ namespace beebit {
 
 struct Configuration;
 class CentroidTracker;
+class BeeNet;
 
 class PeopleCounter
 {
@@ -33,10 +33,9 @@ private:
     Configuration *m_config;
 
     cv::VideoCapture m_capture;
-    cv::dnn::Net m_network;
-    std::unique_ptr<CentroidTracker> m_tracker;
 
-    std::vector<cv::String> m_outLayerNames;
+    std::unique_ptr<BeeNet> m_network;
+    std::unique_ptr<CentroidTracker> m_tracker;
 
     // Counters
     uint32_t totalUp;
@@ -44,10 +43,7 @@ private:
 
     uint32_t m_totalFrames;
 
-    std::vector<cv::Rect> m_detections;
     std::string m_statusText;
-
-    BeeCamera m_camera;
 };
 
 }
