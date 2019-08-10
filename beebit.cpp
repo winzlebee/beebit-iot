@@ -116,9 +116,8 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
     std::vector<cv::Mat> forwardPass;
     m_network.forward(forwardPass, m_outLayerNames);
     
-    std::vector<cv::Rect> detections = blobToRects(frame, forwardPass, &m_network, m_config);
+    m_detections = blobToRects(frame, forwardPass, &m_network, m_config);
 
-    log(detections.size());
     for (const auto &rect : detections) {
         cv::rectangle(frame, rect, rectColor, 4);
     }
