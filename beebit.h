@@ -54,7 +54,7 @@ private:
     // Current position of the count line
     cv::Point2f m_lineStart;
     cv::Point2f m_lineEnd;
-    bool m_trackLine;
+    bool m_trackLine = false;
 
     // Counters
     uint32_t totalUp;

@@ -14,7 +14,7 @@
 namespace beebit {
 
 const cv::Scalar rectColor(255, 0, 0);
-const cv::Size screenSize(800, 600);
+const cv::Size screenSize(416, 416);
 
 cv::Point2i normalToScreen(const cv::Point2f &point) {
     return cv::Point2i(point.x*screenSize.width, point.y*screenSize.height);
@@ -29,7 +29,7 @@ float pointLineDist(const cv::Point2i &l1, const cv::Point2i &l2, const cv::Poin
     int x_diff = l2.x - l1.x;
     int y_diff = l2.y - l1.y;
     float num = -(y_diff*point.x - x_diff*point.y + l2.x*l1.y - l2.y*l1.x);
-    return num / cv::norm(cv::Vec2i(x_diff, y_diff));
+    return num / cv::sqrt(x_diff*x_diff + y_diff*y_diff);
 }
 
 // Returns the point of intersection between a line and a point
@@ -44,11 +44,11 @@ PeopleCounter::PeopleCounter(int cameraId) {
     log("Loading Model");
 
     m_network = std::make_unique<BeeNet>(m_config);
+    
+    m_capture.open(cameraId);
 
     m_capture.set(cv::CAP_PROP_FRAME_WIDTH, screenSize.width);
     m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, screenSize.height);
-    
-    m_capture.open(cameraId);
 
     // Initialize the BeeBit tracker
     m_tracker = std::make_unique<CentroidTracker>(40, 50);
@@ -97,8 +97,9 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
 
     if (m_totalFrames % m_config->skipFrames == 0) {
         m_statusText = "Detecting";
+        m_trackers.clear();
 
-        std::vector<cv::Rect> detections = m_network->getDetections(frame);
+        std::vector<cv::Rect> detections = m_network->getDetections(frame, screenSize);
 
         for (const auto &rect : detections) {
             cv::rectangle(frame, rect, rectColor, 4);

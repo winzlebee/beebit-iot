@@ -27,14 +27,19 @@ void CentroidTracker::deregisterCentroid(const int centroidId) {
 
 const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::Rect> &boxes) {
     if (boxes.empty()) {
+        std::vector<int> markedForRemoval;
         for (auto &pair : m_disappearedTime) {
             // Add this frame where we haven't detected the frame
-            pair.second += 1;
-            assert(m_disappearedTime[pair.first] == pair.second);
-            if (pair.second > m_maxDisappeared) {
-                deregisterCentroid(pair.first);
+            m_disappearedTime[pair.first] += 1;
+            if (m_disappearedTime[pair.first] > m_maxDisappeared) {
+                markedForRemoval.push_back(pair.first);
             }
         }
+
+        for (const int &remove : markedForRemoval) {
+            deregisterCentroid(remove);
+        }
+
         return m_objects;
     }
     

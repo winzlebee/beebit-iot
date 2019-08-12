@@ -68,12 +68,12 @@ std::vector<cv::Rect> BeeNet::getDetections(const cv::Mat &frame, const cv::Size
     std::vector<cv::Rect> rects = blobToRects(detectFrame, forwardPass, m_network.get(), m_config);
 
     // Scale the rectangles to fit the proper screen size
-    for (auto &rect : rects) {
+    /*for (auto &rect : rects) {
         rect.x = float(rect.x/darknetSize.width) * screenSize.width;
         rect.y = float(rect.y/darknetSize.height) * screenSize.height;
         rect.width = float(rect.width/darknetSize.width) * screenSize.width;
         rect.height = float(rect.height/darknetSize.height) * screenSize.height;
-    }
+    }*/
 
     return rects;
 }
