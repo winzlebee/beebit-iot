@@ -53,18 +53,29 @@ BeeNet::~BeeNet() {
     
 }
 
-std::vector<cv::Rect> BeeNet::getDetections(cv::Mat &frame) {
-    cv::resize(frame, frame, darknetSize);
+std::vector<cv::Rect> BeeNet::getDetections(const cv::Mat &frame, const cv::Size &screenSize) {
+    cv::Mat detectFrame;
+    cv::resize(frame, detectFrame, darknetSize);
 
     if (frame.empty()) return {};
 
-    cv::Mat blob = cv::dnn::blobFromImage(frame, 1.0, darknetSize, cv::Scalar(), true, false, CV_8U);
+    cv::Mat blob = cv::dnn::blobFromImage(detectFrame, 1.0, darknetSize, cv::Scalar(), true, false, CV_8U);
     m_network->setInput(blob, "", dnnScale);
 
     std::vector<cv::Mat> forwardPass;
     m_network->forward(forwardPass, m_outputLayerNames);
 
-    return blobToRects(frame, forwardPass, m_network.get(), m_config);
+    std::vector<cv::Rect> rects = blobToRects(detectFrame, forwardPass, m_network.get(), m_config);
+
+    // Scale the rectangles to fit the proper screen size
+    for (auto &rect : rects) {
+        rect.x = float(rect.x/darknetSize.width) * screenSize.width;
+        rect.y = float(rect.y/darknetSize.height) * screenSize.height;
+        rect.width = float(rect.width/darknetSize.width) * screenSize.width;
+        rect.height = float(rect.height/darknetSize.height) * screenSize.height;
+    }
+
+    return rects;
 }
 
 cv::dnn::Net *BeeNet::getNetwork() {

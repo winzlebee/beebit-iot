@@ -14,9 +14,10 @@
 namespace beebit {
 
 const cv::Scalar rectColor(255, 0, 0);
+const cv::Size screenSize(800, 600);
 
 cv::Point2i normalToScreen(const cv::Point2f &point) {
-    return cv::Point2i(point.x*416, point.y*416);
+    return cv::Point2i(point.x*screenSize.width, point.y*screenSize.height);
 }
 
 cv::Vec2f perpendicular(const cv::Vec2f &vector) {
@@ -43,6 +44,10 @@ PeopleCounter::PeopleCounter(int cameraId) {
     log("Loading Model");
 
     m_network = std::make_unique<BeeNet>(m_config);
+
+    m_capture.set(cv::CAP_PROP_FRAME_WIDTH, screenSize.width);
+    m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, screenSize.height);
+    
     m_capture.open(cameraId);
 
     // Initialize the BeeBit tracker
