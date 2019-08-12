@@ -5,7 +5,8 @@ This repositroy contains all the necessary files to run the BeeBit IoT software 
 ## Instructions
 
 ### Linux
-Building on *Linux* is relatively straightforward. The below instructions are designed for *debian-based distros* but they should work on any distribution.
+Building on *Linux* is relatively straightforward. The below instructions are designed for *debian-based distros.If you post you're git names i'll make sure to add you too :)
+Switched to C++ from python because it ran *
 
 **Make sure you don't have OpenCV installed from the default package manager.**
 ```bash
