@@ -18,7 +18,12 @@ sudo apt remove libopencv*
 ```bash
 unzip opencv4.1.1.zip
 unzip opencv_contrib-4.1.1.zip
-mkdir opencv4.1.1/build && cd opencv4.1.1/build
+
+cd opencv_contrib-4.1.1/modules
+rm -r !("tracking"|"plot")
+cd $HOME/Downloads
+
+mkdir opencv-4.1.1/build && cd opencv-4.1.1/build
 cmake ../ -D OPENCV_EXTRA_MODULES_PATH=$HOME/Downloads/opencv_contrib-4.1.1/modules
 make -j4
 sudo make install
