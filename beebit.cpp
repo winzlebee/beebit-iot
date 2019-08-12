@@ -151,7 +151,9 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
             m_objects.push_back(personObject);
         }
 
-        cv::String pointIdText = "ID: " + trackedPerson.first;
+        std::string pointIdText("ID: ");
+        pointIdText += std::to_string(trackedPerson.first);
+        
         cv::circle(frame, trackedPerson.second, 4, (0, 0, 255), -1);
         cv::putText(frame, pointIdText, (trackedPerson.second - cv::Point2i(10, 10)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
