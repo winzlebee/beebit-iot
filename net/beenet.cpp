@@ -4,15 +4,12 @@
 
 namespace beebit {
 
-const cv::Size darknetSize(416, 416);
 const float dnnScale = 0.00392f;
 
-namespace {
-
 // Take a blob generated on an output for a Neural Network and generate Rectangles for the defined class
-std::vector<cv::Rect> blobToRects(const cv::Mat &frame, const std::vector<cv::Mat> &blob, cv::dnn::Net *net, const Configuration *config, const cv::Size &finalSize) {
-    static std::vector<int> outLayers = net->getUnconnectedOutLayers();
-    static std::string outLayerType = net->getLayer(outLayers[0])->type;
+std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vector<cv::Mat> &blob, const cv::Size &finalSize) {
+    static std::vector<int> outLayers = m_network->getUnconnectedOutLayers();
+    static std::string outLayerType = m_network->getLayer(outLayers[0])->type;
 
     std::vector<cv::Rect> boxes;
     if (outLayerType == "Region") {
@@ -24,7 +21,7 @@ std::vector<cv::Rect> blobToRects(const cv::Mat &frame, const std::vector<cv::Ma
                 cv::Point classIdPoint;
                 double confidence;
                 minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-                if (confidence > config->confidence && classIdPoint.x == PERSON_CLASS) {
+                if (confidence > m_config->confidence && classIdPoint.x == PERSON_CLASS) {
                     int centerX = (int)(data[0] * frame.cols);
                     int centerY = (int)(data[1] * frame.rows);
                     int width = (int)(data[2] * frame.cols);
@@ -32,9 +29,9 @@ std::vector<cv::Rect> blobToRects(const cv::Mat &frame, const std::vector<cv::Ma
                     int left = centerX - width / 2;
                     int top = centerY - height / 2;
 
-                    boxes.push_back(cv::Rect((float(left)/darknetSize.width) * finalSize.width,
-                                              float(top)/darknetSize.height * finalSize.height,
-                                               float(width)/darknetSize.width * finalSize.width, float(height)/darknetSize.height * finalSize.height));
+                    boxes.push_back(cv::Rect((float(left)/m_netSize.width) * finalSize.width,
+                                              float(top)/m_netSize.height * finalSize.height,
+                                               float(width)/m_netSize.width * finalSize.width, float(height)/m_netSize.height * finalSize.height));
                 }
             }
         }
@@ -42,9 +39,7 @@ std::vector<cv::Rect> blobToRects(const cv::Mat &frame, const std::vector<cv::Ma
     return boxes;
 }
 
-}
-
-BeeNet::BeeNet(const Configuration *config) : m_config(config) {
+BeeNet::BeeNet(const Configuration *config) : m_config(config), m_netSize(cv::Size(config->neuralNetQuality, config->neuralNetQuality)) {
     m_network = std::make_unique<cv::dnn::Net>(cv::dnn::readNetFromDarknet(m_config->configLocation, m_config->modelLocation));
 
     m_outputLayerNames = m_network->getUnconnectedOutLayersNames();
@@ -57,17 +52,17 @@ BeeNet::~BeeNet() {
 
 std::vector<cv::Rect> BeeNet::getDetections(const cv::Mat &frame, const cv::Size &screenSize) {
     cv::Mat detectFrame;
-    cv::resize(frame, detectFrame, darknetSize);
+    cv::resize(frame, detectFrame, m_netSize);
 
     if (frame.empty()) return {};
 
-    cv::Mat blob = cv::dnn::blobFromImage(detectFrame, 1.0, darknetSize, cv::Scalar(), true, false, CV_8U);
+    cv::Mat blob = cv::dnn::blobFromImage(detectFrame, 1.0, m_netSize, cv::Scalar(), true, false, CV_8U);
     m_network->setInput(blob, "", dnnScale);
 
     std::vector<cv::Mat> forwardPass;
     m_network->forward(forwardPass, m_outputLayerNames);
 
-    std::vector<cv::Rect> rects = blobToRects(detectFrame, forwardPass, m_network.get(), m_config, screenSize);
+    std::vector<cv::Rect> rects = blobToRects(detectFrame, forwardPass, screenSize);
 
     return rects;
 }

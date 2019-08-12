@@ -16,7 +16,12 @@ struct Configuration {
     // Number of frames to skip during detection
     int skipFrames = 5;
     // Minimum probability to filter weak detections
-    float confidence = 0.4;
+    float confidence = 0.2;
+    // Size of the captured image
+    int imageWidth = 640;
+    int imageHeight = 480;
+    // Quality of the neural net detection used
+    int neuralNetQuality = 416;
 };
 
 Configuration *loadConfig();

@@ -44,6 +44,12 @@ Configuration *loadConfig() {
                 conf.skipFrames = stoi(segments[1]);
             } else if (segments[0] == "raspi") {
                 conf.usePiCam = bool(stoi(segments[1]));
+            } else if (segments[0] == "imageWidth") {
+                conf.imageWidth = stoi(segments[1]);
+            } else if (segments[0] == "imageHeight") {
+                conf.imageHeight = stoi(segments[1]);
+            } else if (segments[0] == "neuralNetQuality") {
+                conf.neuralNetQuality = stoi(segments[1]);
             }
 
         } catch (std::invalid_argument &exception) {
@@ -64,6 +70,10 @@ void writeConfig(const Configuration &conf) {
     outFile << "confidence=" << conf.confidence << std::endl;
     outFile << "skipFrames=" << conf.skipFrames << std::endl;
     outFile << "raspi=" << conf.usePiCam << std::endl;
+    outFile << "imageWidth=" << conf.imageWidth << std::endl;
+    outFile << "imageHeight=" << conf.imageHeight << std::endl;
+    outFile << "# Quality in darknet. Can be 320 or 416" << std::endl;
+    outFile << "neuralNetQuality=" << conf.neuralNetQuality << std::endl;
     
     outFile << std::endl;
 

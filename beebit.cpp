@@ -14,10 +14,9 @@
 namespace beebit {
 
 const cv::Scalar rectColor(255, 0, 0);
-const cv::Size screenSize(640, 480);
 
-cv::Point2i normalToScreen(const cv::Point2f &point) {
-    return cv::Point2i(point.x*screenSize.width, point.y*screenSize.height);
+cv::Point2i normalToScreen(const cv::Point2f &point, const cv::Size &img) {
+    return cv::Point2i(point.x*img.width, point.y*img.height);
 }
 
 cv::Vec2f perpendicular(const cv::Vec2f &vector) {
@@ -38,8 +37,7 @@ cv::Point2i getPointLineIntersect(const cv::Point2i &start, const cv::Point2i &e
     return intersect;
 }
 
-PeopleCounter::PeopleCounter(int cameraId) {
-    m_config = loadConfig();
+PeopleCounter::PeopleCounter(int cameraId) : m_config(loadConfig()), m_imgSize(cv::Size(m_config->imageWidth, m_config->imageHeight)) {
 
     log("Loading Model");
 
@@ -47,11 +45,11 @@ PeopleCounter::PeopleCounter(int cameraId) {
     
     m_capture.open(cameraId);
 
-    m_capture.set(cv::CAP_PROP_FRAME_WIDTH, screenSize.width);
-    m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, screenSize.height);
+    m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_imgSize.width);
+    m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_imgSize.height);
 
     // Initialize the BeeBit tracker
-    m_tracker = std::make_unique<CentroidTracker>(40, 50);
+    m_tracker = std::make_unique<CentroidTracker>(40, 100);
 
     totalUp = 0;
     totalDown = 0;
@@ -99,7 +97,7 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
         m_statusText = "Detecting";
         m_trackers.clear();
 
-        std::vector<cv::Rect> detections = m_network->getDetections(frame, screenSize);
+        std::vector<cv::Rect> detections = m_network->getDetections(frame, m_imgSize);
 
         for (const auto &rect : detections) {
             //cv::rectangle(frame, rect, rectColor, 4);
@@ -121,7 +119,7 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
     // Initialize a line for detection and determine if the tracked objects have passed the line
     cv::Vec2f lineVec;
     if (m_trackLine) {
-        cv::line(frame, normalToScreen(m_lineStart), normalToScreen(m_lineEnd), cv::Scalar(255, 0, 255), 2);
+        cv::line(frame, normalToScreen(m_lineStart, m_imgSize), normalToScreen(m_lineEnd, m_imgSize), cv::Scalar(255, 0, 255), 2);
         
         lineVec = m_lineEnd - m_lineStart;
         cv::normalize(lineVec);

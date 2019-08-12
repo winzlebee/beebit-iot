@@ -34,10 +34,11 @@ public:
     // Retrieve the current count, as detected by the camera
     int getCurrentCount();
 private:
-    void loop(cv::Mat &frame, double delta);
+void loop(cv::Mat &frame, double delta);
     bool lineInitialized();
 
     Configuration *m_config;
+    const cv::Size m_imgSize;
 
     cv::VideoCapture m_capture;
 
