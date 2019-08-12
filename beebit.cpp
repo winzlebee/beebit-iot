@@ -14,7 +14,7 @@
 namespace beebit {
 
 const cv::Scalar rectColor(255, 0, 0);
-const cv::Size screenSize(416, 416);
+const cv::Size screenSize(640, 480);
 
 cv::Point2i normalToScreen(const cv::Point2f &point) {
     return cv::Point2i(point.x*screenSize.width, point.y*screenSize.height);
@@ -102,7 +102,7 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
         std::vector<cv::Rect> detections = m_network->getDetections(frame, screenSize);
 
         for (const auto &rect : detections) {
-            cv::rectangle(frame, rect, rectColor, 4);
+            //cv::rectangle(frame, rect, rectColor, 4);
 
             // Generate a tracker and add it to the list of trackers
             m_trackers.push_back(cv::TrackerCSRT::create());
