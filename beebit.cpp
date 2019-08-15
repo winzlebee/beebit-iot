@@ -14,6 +14,7 @@
 namespace beebit {
 
 const cv::Scalar rectColor(255, 0, 0);
+const cv::Scalar netRectColor(0, 255, 0);
 
 cv::Point2i normalToScreen(const cv::Point2f &point, const cv::Size &img) {
     return cv::Point2i(point.x*img.width, point.y*img.height);
@@ -100,7 +101,7 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
         std::vector<cv::Rect> detections = m_network->getDetections(frame, m_imgSize);
 
         for (const auto &rect : detections) {
-            //cv::rectangle(frame, rect, rectColor, 4);
+            if (m_showBoxes) cv::rectangle(frame, rect, netRectColor, 4);
 
             // Generate a tracker and add it to the list of trackers
             m_trackers.push_back(cv::TrackerCSRT::create());
@@ -155,6 +156,13 @@ void PeopleCounter::loop(cv::Mat &frame, double delta) {
         cv::circle(frame, trackedPerson.second, 4, (0, 0, 255), -1);
         cv::putText(frame, pointIdText, (trackedPerson.second - cv::Point2i(10, 10)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
+        // If we're showing rectangles, then show the tracked locations
+        if (m_showBoxes) {
+            for (const auto &rect : trackedRects) {
+                cv::rectangle(frame, rect, rectColor, 2);
+            }
+        }
+
     }
     
     cv::imshow("BeeTrack", frame);
@@ -169,6 +177,10 @@ void PeopleCounter::setCountLine(const cv::Point2f &a, const cv::Point2f &b) {
 
 void PeopleCounter::setCountLine(float startx, float starty, float endx, float endy) {
     setCountLine(cv::Point2f(startx, starty), cv::Point2f(endx, endy));
+}
+
+void PeopleCounter::setBoxes(bool boxes) {
+    m_showBoxes = boxes;
 }
 
 bool PeopleCounter::lineInitialized() {

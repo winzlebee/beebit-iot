@@ -31,6 +31,8 @@ public:
     void enableCountLine();
     void disableCountLine();
 
+    void setBoxes(bool show);
+
     // Retrieve the current count, as detected by the camera
     int getCurrentCount();
 private:
@@ -56,6 +58,8 @@ void loop(cv::Mat &frame, double delta);
     cv::Point2f m_lineStart;
     cv::Point2f m_lineEnd;
     bool m_trackLine = false;
+
+    bool m_showBoxes = false;
 
     // Counters
     uint32_t totalUp;

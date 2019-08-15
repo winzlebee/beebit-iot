@@ -29,9 +29,10 @@ std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vecto
                     int left = centerX - width / 2;
                     int top = centerY - height / 2;
 
-                    boxes.push_back(cv::Rect((float(left)/m_netSize.width) * finalSize.width,
+                    boxes.push_back(cv::Rect( float(left)/m_netSize.width * finalSize.width,
                                               float(top)/m_netSize.height * finalSize.height,
-                                               float(width)/m_netSize.width * finalSize.width, float(height)/m_netSize.height * finalSize.height));
+                                              float(width)/m_netSize.width * finalSize.width,
+                                              float(height)/m_netSize.height * finalSize.height ));
                 }
             }
         }
