@@ -89,6 +89,8 @@ void PeopleCounter::begin() {
 
         m_totalFrames += 1;
     }
+
+    log("Main loop exited.");
 }
 
 void PeopleCounter::loop(cv::UMat &frame, double delta) {
