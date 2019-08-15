@@ -91,6 +91,7 @@ const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::
         auto result = getMinDistInputId(existingCentroid);
 
         if (result.second > m_maxDistance) continue;
+        if (contains(usedInput, result.first)) continue;
 
         // Reset the disappeared counter and set this objects new centroid
         m_disappearedTime[existingObject.first] = 0;

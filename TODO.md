@@ -4,7 +4,7 @@
 [x] Utilise a CSRT tracker to identify and track people as they move
 [x] Fix KCF tracker
 [x] Make centroid tracker parameters configurable
-[ ] Allow change of tracker type in configuration
+[x] Allow change of tracker type in configuration
 [ ] Track objects over a line
 [ ] Move entire tracking subroutine over to a different thread
 [ ] Make configurable GUI for testing
