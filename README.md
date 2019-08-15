@@ -39,3 +39,5 @@ sudo ldconfig
 ```bash
 make deps && ./beetrack
 ```
+### Windows
+1.

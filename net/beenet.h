@@ -10,7 +10,7 @@
 
 namespace beebit {
 
-class Configuration;
+struct Configuration;
 
 // The BeeBit neural network module. Currently powered by Darknet
 class BeeNet {
