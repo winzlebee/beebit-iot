@@ -44,12 +44,14 @@ PeopleCounter::PeopleCounter(int cameraId) : m_config(loadConfig()), m_imgSize(c
 
     m_network = std::make_unique<BeeNet>(m_config);
     
+    log("Opening Camera");
     m_capture.open(cameraId);
 
     m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_imgSize.width);
     m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_imgSize.height);
 
     // Initialize the BeeBit tracker
+    log("Initializing tracker");
     m_tracker = std::make_unique<CentroidTracker>(40, 100);
 
     totalUp = 0;

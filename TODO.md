@@ -6,4 +6,5 @@
 [ ] Allow change of tracker type in configuration
 [ ] Track objects over a line
 [ ] Move entire tracking subroutine over to a different thread
-[ ] Allow reporting
+[ ] Make configurable GUI for testing
+[ ] Multithread trackers

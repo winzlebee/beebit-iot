@@ -65,7 +65,7 @@ private:
     uint32_t totalUp;
     uint32_t totalDown;
 
-    int m_totalFrames;
+    uint64_t m_totalFrames;
 
     std::string m_statusText;
 };
