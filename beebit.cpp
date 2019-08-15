@@ -61,7 +61,7 @@ PeopleCounter::PeopleCounter(int cameraId) : m_config(loadConfig()), m_imgSize(c
 void PeopleCounter::begin() {
     // Start the tracking process
     // TODO: Move tracking to a separate thread.
-    cv::Mat frame;
+    cv::UMat frame;
 
     cv::namedWindow("BeeTrack");
 
@@ -86,7 +86,7 @@ void PeopleCounter::begin() {
     }
 }
 
-void PeopleCounter::loop(cv::Mat &frame, double delta) {
+void PeopleCounter::loop(cv::UMat &frame, double delta) {
 
     m_capture >> frame;
 

@@ -21,11 +21,11 @@ public:
     ~BeeNet();
 
     // Makes detections given an image frame. Outputs normalized rect coordinates.
-    std::vector<cv::Rect> getDetections(const cv::Mat &frame, const cv::Size &screenSize);
+    std::vector<cv::Rect> getDetections(const cv::UMat &frame, const cv::Size &screenSize);
 
     cv::dnn::Net *getNetwork();
 private:
-    std::vector<cv::Rect> blobToRects(const cv::Mat &frame, const std::vector<cv::Mat> &blob, const cv::Size &finalSize);
+    std::vector<cv::Rect> blobToRects(const cv::UMat &frame, const std::vector<cv::Mat> &blob, const cv::Size &finalSize);
 
     std::unique_ptr<cv::dnn::Net> m_network;
     std::vector<std::string> m_outputLayerNames;

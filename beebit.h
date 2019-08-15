@@ -36,7 +36,7 @@ public:
     // Retrieve the current count, as detected by the camera
     int getCurrentCount();
 private:
-void loop(cv::Mat &frame, double delta);
+    void loop(cv::UMat &frame, double delta);
     bool lineInitialized();
 
     Configuration *m_config;
