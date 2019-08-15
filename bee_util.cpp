@@ -54,6 +54,10 @@ Configuration *loadConfig() {
                 conf.useOpenCL = bool(stoi(segments[1]));
             } else if (segments[0] == "useCSRT") {
                 conf.useCSRT = bool(stoi(segments[1]));
+            } else if (segments[0] == "maxDisappeared") {
+                conf.maxDisappeared = stoi(segments[1]);
+            } else if (segments[0] == "searchDistance") {
+                conf.searchDistance = stoi(segments[1]);
             }
 
         } catch (std::invalid_argument &exception) {
@@ -79,6 +83,8 @@ void writeConfig(const Configuration &conf) {
     outFile << "useOpenCL=" << int(conf.useOpenCL) << std::endl;
     outFile << "useCSRT=" << int(conf.useCSRT) << std::endl;
     outFile << "neuralNetQuality=" << conf.neuralNetQuality << std::endl;
+    outFile << "maxDisappeared=" << conf.maxDisappeared << std::endl;
+    outFile << "searchDistance=" << conf.searchDistance << std::endl;
     
     outFile << std::endl;
 

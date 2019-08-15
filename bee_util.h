@@ -26,6 +26,11 @@ struct Configuration {
     bool useOpenCL = true;
     // Whether to use KCF or the higher quality CSRT
     bool useCSRT = false;
+    // Number of frames we haven't detected a person before we consider them missing
+    int maxDisappeared = 50;
+    // Maximum distance the tracker will consider consolidating points. Should generally be width / n where n is the average people
+    // expected in the frame.
+    int searchDistance = 50;
 };
 
 Configuration *loadConfig();

@@ -45,7 +45,7 @@ PeopleCounter::PeopleCounter(int cameraId) : m_config(loadConfig()), m_imgSize(c
     log("Loading Model");
 
     m_network = std::make_unique<BeeNet>(m_config);
-    cv::ocl::setUseOpenCL(false);
+    cv::ocl::setUseOpenCL(m_config->useOpenCL);
 
     log("Opening Camera");
     m_capture.open(cameraId);
@@ -55,7 +55,7 @@ PeopleCounter::PeopleCounter(int cameraId) : m_config(loadConfig()), m_imgSize(c
 
     // Initialize the BeeBit tracker
     log("Initializing tracker");
-    m_tracker = std::make_unique<CentroidTracker>(40, 100);
+    m_tracker = std::make_unique<CentroidTracker>(m_config->maxDisappeared, m_config->searchDistance);
 
     totalUp = 0;
     totalDown = 0;
