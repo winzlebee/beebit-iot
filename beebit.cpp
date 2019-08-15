@@ -2,6 +2,8 @@
 #include <raspicam/raspicam_cv.h>
 #endif
 
+#include <opencv2/core/ocl.hpp>
+
 #include "beebit.h"
 #include "bee_util.h"
 
@@ -43,7 +45,8 @@ PeopleCounter::PeopleCounter(int cameraId) : m_config(loadConfig()), m_imgSize(c
     log("Loading Model");
 
     m_network = std::make_unique<BeeNet>(m_config);
-    
+    cv::ocl::setUseOpenCL(false);
+
     log("Opening Camera");
     m_capture.open(cameraId);
 
@@ -106,7 +109,11 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             if (m_showBoxes) cv::rectangle(frame, rect, netRectColor, 4);
 
             // Generate a tracker and add it to the list of trackers
-            m_trackers.push_back(cv::TrackerCSRT::create());
+            if (m_config->useCSRT) {
+                m_trackers.push_back(cv::TrackerCSRT::create());
+            } else {
+                m_trackers.push_back(cv::TrackerKCF::create());
+            }
             m_trackers.back()->init(frame, rect);
         }   
     } else {

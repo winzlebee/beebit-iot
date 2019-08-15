@@ -22,6 +22,10 @@ struct Configuration {
     int imageHeight = 240;
     // Quality of the neural net detection used
     int neuralNetQuality = 416;
+    // Whether to attempt to use OpenCL for computation
+    bool useOpenCL = true;
+    // Whether to use KCF or the higher quality CSRT
+    bool useCSRT = false;
 };
 
 Configuration *loadConfig();

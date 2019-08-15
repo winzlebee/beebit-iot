@@ -29,7 +29,7 @@ const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::
     if (boxes.empty()) {
         std::vector<int> markedForRemoval;
         for (auto &pair : m_disappearedTime) {
-            // Add this frame where we haven't detected the frame
+            // Add this frame where we haven't detected the object
             m_disappearedTime[pair.first] += 1;
             if (m_disappearedTime[pair.first] > m_maxDisappeared) {
                 markedForRemoval.push_back(pair.first);
