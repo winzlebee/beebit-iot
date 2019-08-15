@@ -5,7 +5,7 @@ DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
 build:
-	g++ $(FILES) $(LIBS) -o $(OUTPUT) -g
+	g++ $(FILES) $(LIBS) -o $(OUTPUT) -g -O3
 
 # The install target downloads all the weights and config files needed
 deps: build
