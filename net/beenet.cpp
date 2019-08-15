@@ -2,6 +2,8 @@
 #include "beenet.h"
 #include "../bee_util.h"
 
+#include <iostream>
+
 namespace beebit {
 
 const float dnnScale = 0.00392f;
@@ -28,7 +30,7 @@ std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vecto
                     int height = (int)(data[3] * frame.rows);
                     int left = centerX - width / 2;
                     int top = centerY - height / 2;
-
+                    
                     boxes.push_back(cv::Rect( float(left)/m_netSize.width * finalSize.width,
                                               float(top)/m_netSize.height * finalSize.height,
                                               float(width)/m_netSize.width * finalSize.width,

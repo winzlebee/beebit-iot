@@ -18,8 +18,8 @@ struct Configuration {
     // Minimum probability to filter weak detections
     float confidence = 0.2;
     // Size of the captured image
-    int imageWidth = 640;
-    int imageHeight = 480;
+    int imageWidth = 320;
+    int imageHeight = 240;
     // Quality of the neural net detection used
     int neuralNetQuality = 416;
 };
