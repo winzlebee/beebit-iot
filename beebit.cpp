@@ -128,7 +128,7 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
     // Initialize a line for detection and determine if the tracked objects have passed the line
     cv::Vec2f lineVec;
     if (m_trackLine) {
-        cv::line(frame, normalToScreen(m_lineStart, m_imgSize), normalToScreen(m_lineEnd, m_imgSize), cv::Scalar(255, 0, 255), 2);
+        cv::line(frame, m_lineStart, m_lineEnd, cv::Scalar(255, 0, 255), 1);
         
         lineVec = m_lineEnd - m_lineStart;
         cv::normalize(lineVec);
@@ -144,38 +144,39 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
         });
 
         const bool personExists = personIndex != m_objects.end();
-        
-        if (m_trackLine) {
-            cv::line(frame, getPointLineIntersect(m_lineStart, m_lineEnd, trackedPerson.second, lineVec), trackedPerson.second, cv::Scalar(255, 0, 0), 1);
-        }
 
         if (personExists) {
             TrackableObject &ob = *personIndex;
 
-            // Determine the direction the tracked object is travelling by comparing it to the running average
-            cv::Point2i sum = std::accumulate(ob.centroids.begin(), ob.centroids.end(), cv::Point2i(0, 0), std::plus<cv::Point2i>());
-            cv::Point2i mean(sum.x / ob.centroids.size(), sum.y / ob.centroids.size());
-            cv::Point2i diff(mean - trackedPerson.second);
-            cv::Vec2f dirVector = cv::normalize(cv::Vec2f(diff.x, diff.y));
+            if (m_trackLine) {
 
-            float direction = dirVector.dot(lineVec);
+                // Determine the direction the tracked object is travelling by comparing it to the running average
+                cv::Point2i sum = std::accumulate(ob.centroids.begin(), ob.centroids.end(), cv::Point2i(0, 0), std::plus<cv::Point2i>());
+                cv::Point2i mean(sum.x / ob.centroids.size(), sum.y / ob.centroids.size());
+                cv::Point2i diff(mean - trackedPerson.second);
+                cv::Vec2f dirVector = cv::normalize(cv::Vec2f(diff.x, diff.y));
 
-            ob.direction = direction;
-            ob.centroids.push_back(trackedPerson.second);
+                float direction = dirVector.dot(lineVec);
 
-            // Count the person
-            if (!ob.counted) {
-                float lineDistance = pointLineDist(m_lineStart, m_lineEnd, trackedPerson.second);
-                ob.distance = lineDistance; 
+                ob.direction = direction;
 
-                if (direction < 0 && lineDistance < 0) {
-                    totalUp += 1;
-                    ob.counted = true;
-                } else if (direction > 0 && lineDistance > 0) {
-                    totalDown += 1;
-                    ob.counted = true;
+                // Count the person
+                if (!ob.counted) {
+                    float lineDistance = std::abs(pointLineDist(m_lineStart, m_lineEnd, trackedPerson.second));
+                    ob.distance = lineDistance; 
+
+                    if (lineDistance < m_config->lineCrossDistance) {
+                        if (direction < 0) {
+                            totalUp += 1;
+                        } else if (direction > 0) {
+                            totalDown += 1;
+                        }
+                        ob.counted = true;
+                    }
                 }
             }
+
+            ob.centroids.push_back(trackedPerson.second);
         } else {
             TrackableObject personObject(trackedPerson.first, trackedPerson.second);
             m_objects.push_back(personObject);
@@ -185,7 +186,15 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
         pointIdText += std::to_string(trackedPerson.first);
         
         cv::circle(frame, trackedPerson.second, 4, (0, 0, 255), -1);
-        cv::putText(frame, pointIdText, (trackedPerson.second - cv::Point2i(10, 10)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+        cv::putText(frame, pointIdText, (trackedPerson.second - cv::Point2i(10, 25)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+
+        if (m_trackLine) {
+            std::string distText("Distance: ");
+            if (personExists) {
+                distText += std::to_string(personIndex->distance);
+            }
+            cv::putText(frame, distText, (trackedPerson.second - cv::Point2i(10, 10)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+        }
 
         // If we're showing rectangles, then show the tracked locations
         if (m_showBoxes) {
@@ -194,12 +203,12 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             }
         }
 
-        if (m_trackLine) {
-            std::string totalCount("Count: ");
-            totalCount += std::to_string(totalDown + totalUp);
-            cv::putText(frame, totalCount, cv::Point(10, m_imgSize.height - 20), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 128, 128), 2);
-        }
+    }
 
+    if (m_trackLine) {
+        std::string totalCount("Count: ");
+        totalCount += std::to_string(totalDown + totalUp);
+        cv::putText(frame, totalCount, cv::Point(10, m_imgSize.height - 20), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 128, 128), 2);
     }
     
     cv::imshow("BeeTrack", frame);
@@ -207,8 +216,8 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
 }
 
 void PeopleCounter::setCountLine(const cv::Point2f &a, const cv::Point2f &b) {
-    m_lineStart = a;
-    m_lineEnd = b;
+    m_lineStart = normalToScreen(a, m_imgSize);
+    m_lineEnd = normalToScreen(b, m_imgSize);
     enableCountLine();
 }
 

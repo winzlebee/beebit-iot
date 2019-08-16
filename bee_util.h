@@ -31,6 +31,8 @@ struct Configuration {
     // Maximum distance the tracker will consider consolidating points. Should generally be width / n where n is the average people
     // expected in the frame.
     int searchDistance = 50;
+    // Distance from the line where a crossing is considered
+    int lineCrossDistance = 20;
 };
 
 Configuration *loadConfig();
