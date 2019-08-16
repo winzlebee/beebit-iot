@@ -12,6 +12,7 @@
 #include "tracking/trackable_object.h"
 
 #include <chrono>
+#include <numeric>
 
 namespace beebit {
 
@@ -99,10 +100,7 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
 
     std::vector<cv::Rect> trackedRects;
 
-    m_statusText = "Idle";
-
     if (m_totalFrames % m_config->skipFrames == 0) {
-        m_statusText = "Detecting";
         m_trackers.clear();
 
         std::vector<cv::Rect> detections = m_network->getDetections(frame, m_imgSize);
@@ -120,7 +118,6 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
         }   
     } else {
         for (const auto &tracker : m_trackers) {
-            m_statusText = "Tracking";
 
             cv::Rect2d trackerRect;
             tracker->update(frame, trackerRect);
@@ -152,12 +149,35 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             cv::line(frame, getPointLineIntersect(m_lineStart, m_lineEnd, trackedPerson.second, lineVec), trackedPerson.second, cv::Scalar(255, 0, 0), 1);
         }
 
-        TrackableObject personObject(trackedPerson.first, trackedPerson.second);
         if (personExists) {
-            // Count the person
+            TrackableObject &ob = *personIndex;
 
-            *personIndex = personObject;
+            // Determine the direction the tracked object is travelling by comparing it to the running average
+            cv::Point2i sum = std::accumulate(ob.centroids.begin(), ob.centroids.end(), cv::Point2i(0, 0), std::plus<cv::Point2i>());
+            cv::Point2i mean(sum.x / ob.centroids.size(), sum.y / ob.centroids.size());
+            cv::Point2i diff(mean - trackedPerson.second);
+            cv::Vec2f dirVector = cv::normalize(cv::Vec2f(diff.x, diff.y));
+
+            float direction = dirVector.dot(lineVec);
+
+            ob.direction = direction;
+            ob.centroids.push_back(trackedPerson.second);
+
+            // Count the person
+            if (!ob.counted) {
+                float lineDistance = pointLineDist(m_lineStart, m_lineEnd, trackedPerson.second);
+                ob.distance = lineDistance; 
+
+                if (direction < 0 && lineDistance < 0) {
+                    totalUp += 1;
+                    ob.counted = true;
+                } else if (direction > 0 && lineDistance > 0) {
+                    totalDown += 1;
+                    ob.counted = true;
+                }
+            }
         } else {
+            TrackableObject personObject(trackedPerson.first, trackedPerson.second);
             m_objects.push_back(personObject);
         }
 
@@ -172,6 +192,12 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             for (const auto &rect : trackedRects) {
                 cv::rectangle(frame, rect, rectColor, 2);
             }
+        }
+
+        if (m_trackLine) {
+            std::string totalCount("Count: ");
+            totalCount += std::to_string(totalDown + totalUp);
+            cv::putText(frame, totalCount, cv::Point(10, m_imgSize.height - 20), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 128, 128), 2);
         }
 
     }
