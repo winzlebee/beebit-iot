@@ -5,7 +5,7 @@
 [x] Fix KCF tracker
 [x] Make centroid tracker parameters configurable
 [x] Allow change of tracker type in configuration
-[ ] Track objects over a line
+[x] Track objects over a line
 [ ] Move entire tracking subroutine over to a different thread
 [ ] Make configurable GUI for testing
 [ ] Multithread trackers
