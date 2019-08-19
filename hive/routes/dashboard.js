@@ -122,6 +122,18 @@ router.get('/', function(req, res, next) {
   });
 });
 
+/* GET Stats */
+router.get('dash/stats', function(req, res, next) {
+  if (!req.session.username) {
+    res.redirect("/dashboard/login");
+    return;
+  }
+  res.render('dash/stats', {
+    layout: 'dash/layout',
+    title: 'BeeBit Stats'
+  });
+});
+
 /* GET view specific bee. */
 // TODO
 router.get('/bees/:beeId', function(req, res, next) {

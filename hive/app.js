@@ -42,13 +42,16 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/public')));
 app.use(session({secret: 'password123',	cookie: { maxAge: 900000 } }));
 
 /* Set up access routes */
 app.use('/', index);
 app.use('/dashboard', dashboard);
 app.use('/bee', bee);
+
+/* Set up images for serving */
+app.use(express.static('public/dist/img'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
