@@ -13,7 +13,7 @@ sudo apt remove libopencv*
 ```
 
 1. Download opencv **4.1.1** (the lastest version as of the time of writing) from [here](https://github.com/opencv/opencv/archive/4.1.1.zip)
-2. Download the opencv contrib repositroy [here](https://github.com/opencv/opencv_contrib/archive/4.1.1.zip)
+2. Download the opencv contrib repository [here](https://github.com/opencv/opencv_contrib/archive/4.1.1.zip)
 3. Use the following commands to extract the archive and install OpenCV with the contrib modules. The default flags are fine.
 ```bash
 unzip opencv4.1.1.zip
