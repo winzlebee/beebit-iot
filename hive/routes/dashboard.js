@@ -123,7 +123,7 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET Stats */
-router.get('dash/stats', function(req, res, next) {
+router.get('/stats', function(req, res, next) {
   if (!req.session.username) {
     res.redirect("/dashboard/login");
     return;
