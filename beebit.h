@@ -31,13 +31,20 @@ public:
     void enableCountLine();
     void disableCountLine();
 
-    void setBoxes(bool show);
+    void setDebugWindow(bool debug);
 
     // Retrieve the current count, as detected by the camera
     int getCurrentCount();
 private:
     void loop(cv::UMat &frame, double delta);
-    bool lineInitialized();
+    bool lineInitialized() const;
+
+    /**
+     * @brief Adds debug information represented by this people tracker to the given frame
+     * 
+     * @param frame The image to add debug info to
+     */
+    void showDebugInfo(cv::UMat &frame);
 
     Configuration *m_config;
     const cv::Size m_imgSize;
@@ -59,7 +66,7 @@ private:
     cv::Point2f m_lineEnd;
     bool m_trackLine = false;
 
-    bool m_showBoxes = false;
+    bool m_debug = false;
 
     // Counters
     uint32_t totalUp;

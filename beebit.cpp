@@ -69,7 +69,7 @@ void PeopleCounter::begin() {
     // TODO: Move tracking to a separate thread.
     cv::UMat frame;
 
-    cv::namedWindow("BeeTrack");
+    if (m_debug) cv::namedWindow("BeeTrack");
 
     std::chrono::duration<double> deltaTime(0);
     while (true) {
@@ -106,7 +106,6 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
         std::vector<cv::Rect> detections = m_network->getDetections(frame, m_imgSize);
 
         for (const auto &rect : detections) {
-            if (m_showBoxes) cv::rectangle(frame, rect, netRectColor, 4);
 
             // Generate a tracker and add it to the list of trackers
             if (m_config->useCSRT) {
@@ -128,8 +127,6 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
     // Initialize a line for detection and determine if the tracked objects have passed the line
     cv::Vec2f lineVec;
     if (m_trackLine) {
-        cv::line(frame, m_lineStart, m_lineEnd, cv::Scalar(255, 0, 255), 1);
-        
         lineVec = m_lineEnd - m_lineStart;
         cv::normalize(lineVec);
         lineVec = perpendicular(lineVec);
@@ -181,38 +178,38 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             TrackableObject personObject(trackedPerson.first, trackedPerson.second);
             m_objects.push_back(personObject);
         }
+    }
+
+    if (m_debug) showDebugInfo(frame);
+}
+
+void PeopleCounter::showDebugInfo(cv::UMat &frame) {
+
+    // Show debug info for all our people
+    for (const auto &object : m_objects) {
 
         std::string pointIdText("ID: ");
-        pointIdText += std::to_string(trackedPerson.first);
+        pointIdText += std::to_string(object.objectId);
         
-        cv::circle(frame, trackedPerson.second, 4, (0, 0, 255), -1);
-        cv::putText(frame, pointIdText, (trackedPerson.second - cv::Point2i(10, 25)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+        cv::circle(frame, object.centroids.back(), 4, (0, 0, 255), -1);
+        cv::putText(frame, pointIdText, (object.centroids.back() - cv::Point2i(10, 25)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
 
         if (m_trackLine) {
             std::string distText("Distance: ");
-            if (personExists) {
-                distText += std::to_string(personIndex->distance);
-            }
-            cv::putText(frame, distText, (trackedPerson.second - cv::Point2i(10, 10)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+            distText += std::to_string(object.distance);
+            cv::putText(frame, distText, (object.centroids.back() - cv::Point2i(10, 10)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
         }
-
-        // If we're showing rectangles, then show the tracked locations
-        if (m_showBoxes) {
-            for (const auto &rect : trackedRects) {
-                cv::rectangle(frame, rect, rectColor, 2);
-            }
-        }
-
     }
 
+    // Print our tracking line
     if (m_trackLine) {
         std::string totalCount("Count: ");
         totalCount += std::to_string(totalDown + totalUp);
         cv::putText(frame, totalCount, cv::Point(10, m_imgSize.height - 20), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 128, 128), 2);
+        cv::line(frame, m_lineStart, m_lineEnd, cv::Scalar(255, 0, 255), 1);
     }
-    
-    cv::imshow("BeeTrack", frame);
 
+    cv::imshow("BeeTrack", frame);
 }
 
 void PeopleCounter::setCountLine(const cv::Point2f &a, const cv::Point2f &b) {
@@ -225,11 +222,11 @@ void PeopleCounter::setCountLine(float startx, float starty, float endx, float e
     setCountLine(cv::Point2f(startx, starty), cv::Point2f(endx, endy));
 }
 
-void PeopleCounter::setBoxes(bool boxes) {
-    m_showBoxes = boxes;
+void PeopleCounter::setDebugWindow(bool debug) {
+    m_debug = debug;
 }
 
-bool PeopleCounter::lineInitialized() {
+bool PeopleCounter::lineInitialized() const {
     return cv::norm(m_lineEnd - m_lineStart) > 1e-8;
 }
 
