@@ -9,3 +9,5 @@
 - [ ] Move entire tracking subroutine over to a different thread
 - [ ] Make configurable GUI for testing
 - [ ] Multithread trackers
+- [ ] Detect people inside a box in addition to line detection
+- [ ] Construct daemon that communicates with the server software
