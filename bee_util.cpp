@@ -8,6 +8,24 @@ namespace beebit {
 
 static const std::string CONFIG_FILE_NAME = "beebit.cfg";
 
+template<class T>
+struct streamer {
+    const T& val;
+};
+template<class T> streamer(T) -> streamer<T>;
+
+template<class T>
+std::ostream& operator<<(std::ostream& os, streamer<T> s) {
+    os << s.val;
+    return os;
+}
+
+template<class... Ts>
+std::ostream& operator<<(std::ostream& os, streamer<std::variant<Ts...>> sv) {
+   std::visit([&os](const auto& v) { os << streamer{v}; }, sv.val);
+   return os;
+}
+
 ConfigMap readConfiguration(const std::string &location) {
 
     std::ifstream inFile(location.c_str());
@@ -50,6 +68,20 @@ ConfigMap readConfiguration(const std::string &location) {
     }
 
     return readResult;
+
+}
+
+void writeConfiguration(const std::string &location, const ConfigMap &newMap) {
+    std::ofstream outFile(location);
+
+    if (!outFile) {
+        return;
+    }
+
+    // Write all the elements as key-value pairs
+    for (const auto &pair : newMap) {
+        outFile << pair.first << '=' << streamer{pair.second} << std::endl;
+    }
 
 }
 
