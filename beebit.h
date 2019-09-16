@@ -11,7 +11,7 @@
 
 namespace beebit {
 
-struct Configuration;
+struct TrackerConfiguration;
 class CentroidTracker;
 class BeeNet;
 
@@ -46,7 +46,7 @@ private:
      */
     void showDebugInfo(cv::UMat &frame);
 
-    Configuration *m_config;
+    TrackerConfiguration *m_config;
     const cv::Size m_imgSize;
 
     cv::VideoCapture m_capture;

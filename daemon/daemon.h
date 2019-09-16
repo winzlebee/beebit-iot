@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "../util/types.h"
+
 namespace beebit {
 
 /**
@@ -18,6 +20,17 @@ public:
      * @param endpoint The URL that will be used for all queries.
      */
     Daemon(const std::string &endpoint);
+    ~Daemon();
+
+    /**
+     * @brief Begin running the daemon
+     * 
+     */
+    void start();
+
+private:
+    ConfigMap m_config;
+    uint32_t m_lifetime;
 
 };
 

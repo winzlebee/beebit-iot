@@ -41,7 +41,7 @@ cv::Point2i getPointLineIntersect(const cv::Point2i &start, const cv::Point2i &e
     return intersect;
 }
 
-PeopleCounter::PeopleCounter(int cameraId) : m_config(loadConfig()), m_imgSize(cv::Size(m_config->imageWidth, m_config->imageHeight)) {
+PeopleCounter::PeopleCounter(int cameraId) : m_config(loadTrackerConfig()), m_imgSize(cv::Size(m_config->imageWidth, m_config->imageHeight)) {
 
     log("Loading Model");
 

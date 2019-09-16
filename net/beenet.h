@@ -10,14 +10,14 @@
 
 namespace beebit {
 
-class Configuration;
+struct TrackerConfiguration;
 
 // The BeeBit neural network module. Currently powered by Darknet
 class BeeNet {
 public:
     
     // Initialize the BeeBit neural network with a config file
-    BeeNet(const Configuration *config);
+    BeeNet(const TrackerConfiguration *config);
     ~BeeNet();
 
     // Makes detections given an image frame. Outputs normalized rect coordinates.
@@ -32,7 +32,7 @@ private:
 
     const cv::Size m_netSize;
 
-    const Configuration *m_config;
+    const TrackerConfiguration *m_config;
 };
 
 }

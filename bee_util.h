@@ -3,10 +3,20 @@
 #include <string>
 #include <iostream>
 
+#include "util/types.h"
+
 namespace beebit {
 
+/**
+ * @brief Read a generalized configuration file into a map of configurations
+ * 
+ * @param location 
+ * @return ConfigMap 
+ */
+ConfigMap readConfiguration(const std::string &location);
+
 // Contains default configuration variables
-struct Configuration {
+struct TrackerConfiguration {
     // Location of the trained model
     std::string modelLocation = "dnn/yolov3.weights";
     // Location of the config for the neural network
@@ -35,8 +45,8 @@ struct Configuration {
     int lineCrossDistance = 20;
 };
 
-Configuration *loadConfig();
-void writeConfig(const Configuration &conf);
+TrackerConfiguration *loadTrackerConfig();
+void writeTrackerConfig(const TrackerConfiguration &conf);
 
 template<typename T>
 void log(const T &text) {

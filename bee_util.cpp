@@ -8,15 +8,60 @@ namespace beebit {
 
 static const std::string CONFIG_FILE_NAME = "beebit.cfg";
 
-Configuration *loadConfig() {
-    static Configuration conf;
+ConfigMap readConfiguration(const std::string &location) {
+
+    std::ifstream inFile(location.c_str());
+    ConfigMap readResult;
+
+    if (!inFile) {
+        return readResult;
+    }
+
+    // Read the lines of the config into the configuration map
+    std::string currentLine;
+    while (std::getline(inFile, currentLine)) {
+        if (currentLine.at(0) == '#') continue;
+
+        // For the current line, separate the configuration into a set of keys and values
+        std::stringstream lineStream(currentLine);
+        std::string segments[2];
+
+        for (int i = 0; i < 2; i++) {
+            std::getline(lineStream, segments[i], '=');
+        }
+        
+        std::variant<int, float, std::string> lineElement;
+
+        // Check if the string has a decimal point
+        const bool isDecimal = segments[1].find('.') != std::string::npos;
+
+        if (isDecimal) {
+            lineElement = (float) atof(segments[1].c_str());
+        } else {
+            lineElement = atoi(segments[1].c_str());
+            if (std::get<int>(lineElement) == 0) {
+                // Store the value as a string
+                lineElement = segments[1];
+            }
+        }
+
+        // Insert the key and value into a map as a named pair
+        readResult.insert(std::make_pair(segments[0], lineElement));
+    }
+
+    return readResult;
+
+}
+
+TrackerConfiguration *loadTrackerConfig() {
+    static TrackerConfiguration conf;
 
     std::ifstream inFile;
     inFile.open(CONFIG_FILE_NAME);
 
     if (!inFile) {
         log("Config file not found. Creating...");
-        writeConfig(conf);
+        writeTrackerConfig(conf);
         return &conf;
     }
 
@@ -69,7 +114,7 @@ Configuration *loadConfig() {
     return &conf;
 }
 
-void writeConfig(const Configuration &conf) {
+void writeTrackerConfig(const TrackerConfiguration &conf) {
     std::ofstream outFile(CONFIG_FILE_NAME);
 
     outFile << "# BeeBit Configuration" << std::endl;

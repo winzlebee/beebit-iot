@@ -10,4 +10,5 @@
 - [ ] Make configurable GUI for testing
 - [ ] Multithread trackers
 - [ ] Detect people inside a box in addition to line detection
+- [ ] Abstract detection away so that PeopleCounter::performDetection() performs a detection rather than requiring a main loop.
 - [ ] Construct daemon that communicates with the server software
