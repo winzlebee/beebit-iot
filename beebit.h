@@ -9,6 +9,10 @@
 #include <memory>
 #include <string>
 
+namespace std {
+    class thread;
+}
+
 namespace beebit {
 
 struct TrackerConfiguration;
@@ -23,6 +27,7 @@ public:
 
     // Begin the people counting operation
     void begin();
+    std::thread beginThreaded();
 
     // Set the line to count people walking past. Normalized in screen co-ordinates.
     void setCountLine(float startx, float starty, float endx, float endy);

@@ -13,6 +13,7 @@
 
 #include <chrono>
 #include <numeric>
+#include <thread>
 
 namespace beebit {
 
@@ -62,6 +63,10 @@ PeopleCounter::PeopleCounter(int cameraId) : m_config(loadTrackerConfig()), m_im
     totalDown = 0;
     m_totalFrames = 0;
 
+}
+
+std::thread PeopleCounter::beginThreaded() {
+    return std::thread(&PeopleCounter::begin, this);
 }
 
 void PeopleCounter::begin() {

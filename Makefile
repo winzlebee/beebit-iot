@@ -1,7 +1,7 @@
 
 CC=g++ -std=c++17
 OBJECTS=main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
-LIBS=-lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lopencv_tracking -lcurl -I/usr/local/include/opencv4
+LIBS=-lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lopencv_tracking -lpthread -lcurl -I/usr/local/include/opencv4
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
