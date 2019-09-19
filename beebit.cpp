@@ -120,6 +120,7 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             }
             m_trackers.back()->init(frame, rect);
         }   
+
     } else {
         for (const auto &tracker : m_trackers) {
 
@@ -140,6 +141,7 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
     // Update the tracker with the new information
     auto objects = m_tracker->update(trackedRects);
 
+    std::size_t iter = 0;
     for (const auto &trackedPerson : objects) {
         const auto personIndex = std::find_if(m_objects.begin(), m_objects.end(), [&](const TrackableObject &ob) {
             return ob.objectId == trackedPerson.first;
@@ -183,6 +185,16 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             TrackableObject personObject(trackedPerson.first, trackedPerson.second);
             m_objects.push_back(personObject);
         }
+        iter++;
+    }
+
+    if (iter < m_objects.size()) {
+        // Remove the people that are in m_objects but not in our new detection
+        const auto range = std::remove_if(m_objects.begin(), m_objects.end(), [&](const TrackableObject &ob) {
+            return objects.count(ob.objectId) == 0;
+        });
+
+        m_objects.erase(range);
     }
 
     if (m_debug) showDebugInfo(frame);

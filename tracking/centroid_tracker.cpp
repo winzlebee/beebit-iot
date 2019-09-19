@@ -104,12 +104,17 @@ const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::
     // Then we need to check if any of the unfound existing objects have disappeared
     if (m_objects.size() > centroids.size()) {
         for (const auto &existingObject : m_objects) {
+            std::vector<int> marked;
             if (!contains(usedExisting, existingObject.first)) {
                 m_disappearedTime[existingObject.first] += 1;
+                log(m_disappearedTime[existingObject.first]);
 
                 if (m_disappearedTime[existingObject.first] > m_maxDisappeared) {
-                    deregisterCentroid(existingObject.first);
+                    marked.push_back(existingObject.first);
                 }
+            }
+            for (int m : marked) {
+                deregisterCentroid(m);
             }
         }
     } else {

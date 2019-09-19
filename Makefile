@@ -15,7 +15,7 @@ main.o : beebit.h main.cpp
 	$(CC) -c $(LIBS) main.cpp 
 daemon.o : daemon/daemon.h daemon/daemon.cpp
 	$(CC) -c $(LIBS) daemon/daemon.cpp
-beebit.o : beebit.h bee_util.h net/beenet.h tracking/centroid_tracker.h tracking/trackable_object.h
+beebit.o : beebit.h bee_util.h net/beenet.h tracking/centroid_tracker.h tracking/trackable_object.h beebit.cpp
 	$(CC) -c $(LIBS) beebit.cpp
 bee_util.o : bee_util.h bee_util.cpp
 	$(CC) -c $(LIBS) bee_util.cpp
