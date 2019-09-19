@@ -2,8 +2,13 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "../util/types.h"
+
+namespace std {
+class thread;
+}
 
 namespace beebit {
 
@@ -31,6 +36,9 @@ public:
 private:
     ConfigMap m_config;
     uint32_t m_lifetime;
+
+    // The thread where the counts are being performed
+    std::unique_ptr<std::thread> m_countThread;
 
 };
 

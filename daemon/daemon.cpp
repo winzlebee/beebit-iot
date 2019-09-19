@@ -18,7 +18,7 @@ Daemon::Daemon(const std::string &endpoint)
 }
 
 Daemon::~Daemon() {
-
+    m_countThread->join();
 }
 
 void Daemon::start() {
@@ -27,7 +27,9 @@ void Daemon::start() {
 	peopleCounter.setDebugWindow(true);
 	//peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	
-	peopleCounter.begin();
+	m_countThread.reset(peopleCounter.begin());
+
+    log("Count thread started.");
 }
 
 }
