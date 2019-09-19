@@ -135,6 +135,8 @@ TrackerConfiguration *loadTrackerConfig() {
                 conf.maxDisappeared = stoi(segments[1]);
             } else if (segments[0] == "searchDistance") {
                 conf.searchDistance = stoi(segments[1]);
+            } else if (segments[0] == "useTracking") {
+                conf.useTracking = bool(stoi(segments[1]));
             }
 
         } catch (std::invalid_argument &exception) {
@@ -162,6 +164,7 @@ void writeTrackerConfig(const TrackerConfiguration &conf) {
     outFile << "neuralNetQuality=" << conf.neuralNetQuality << std::endl;
     outFile << "maxDisappeared=" << conf.maxDisappeared << std::endl;
     outFile << "searchDistance=" << conf.searchDistance << std::endl;
+    outFile << "useTracking=" << conf.useTracking << std::endl;
     
     outFile << std::endl;
 

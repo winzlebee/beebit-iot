@@ -14,6 +14,7 @@ namespace beebit {
  * @return ConfigMap 
  */
 ConfigMap readConfiguration(const std::string &location);
+void writeConfiguration(const std::string &location, const ConfigMap &newMap);
 
 // Contains default configuration variables
 struct TrackerConfiguration {
@@ -43,6 +44,8 @@ struct TrackerConfiguration {
     int searchDistance = 50;
     // Distance from the line where a crossing is considered
     int lineCrossDistance = 20;
+    // Whether to attempt to track people using a CSRT tracker between frames
+    bool useTracking = false;
 };
 
 TrackerConfiguration *loadTrackerConfig();
