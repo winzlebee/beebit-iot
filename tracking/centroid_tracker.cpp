@@ -47,11 +47,17 @@ const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::
     std::vector<cv::Point2i> centroids;
     centroids.reserve(boxes.size());
 
+    
     for (int i = 0; i < boxes.size(); i++) {
         int centerX = boxes[i].x + boxes[i].width/2;
         int centerY = boxes[i].y + boxes[i].height/2;
+        
+        cv::Point2i point(centerX, centerY);
+        /*if (std::find_if(centroids.begin(), centroids.end(), [&](const auto eCentroid) {
+                return cv::norm(eCentroid-point) < m_maxDistance;
+            }) != centroids.end()) continue;*/
 
-        centroids.push_back(cv::Point2i(centerX, centerY));
+        centroids.push_back(point);
     }
 
     if (m_objects.empty()) {
@@ -104,21 +110,19 @@ const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::
 
     // Then we need to check if any of the unfound existing objects have disappeared
     if (m_objects.size() > centroids.size()) {
+        std::vector<int> marked;
         for (const auto &existingObject : m_objects) {
-            std::vector<int> marked;
             if (!contains(usedExisting, existingObject.first)) {
                 m_disappearedTime[existingObject.first] += 1;
-                log(m_disappearedTime[existingObject.first]);
-
                 if (m_disappearedTime[existingObject.first] > m_maxDisappeared) {
                     marked.push_back(existingObject.first);
                 }
             }
-            for (int m : marked) {
-                deregisterCentroid(m);
-            }
         }
-    } else {
+        for (int m : marked) {
+            deregisterCentroid(m);
+        }
+    } else {    
         // Centroids which weren't counted need to then be registered as new centroids.
         for (int i = 0; i < centroids.size(); i++) {
             if (!contains(usedInput, i)) {
