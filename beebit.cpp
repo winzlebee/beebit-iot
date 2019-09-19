@@ -99,20 +99,15 @@ void PeopleCounter::begin() {
     log("Main loop exited.");
 }
 
-void PeopleCounter::loop(cv::UMat &frame, double delta) {
-
-    m_capture >> frame;
-
-    std::vector<cv::Rect> trackedRects;
-
+void PeopleCounter::getBoxes(const cv::UMat &frame, std::vector<cv::Rect> &detections) {
     if (m_config->useTracking) {
         // Only perform the expensive neural net detections every skipFrames
         if (m_totalFrames % m_config->skipFrames == 0) {
             m_trackers.clear();
 
-            std::vector<cv::Rect> detections = m_network->getDetections(frame, m_imgSize);
+            std::vector<cv::Rect> detect = m_network->getDetections(frame, m_imgSize);
 
-            for (const auto &rect : detections) {
+            for (const auto &rect : detect) {
 
                 // Generate a tracker and add it to the list of trackers
                 if (m_config->useCSRT) {
@@ -127,13 +122,22 @@ void PeopleCounter::loop(cv::UMat &frame, double delta) {
             for (const auto &tracker : m_trackers) {
                 cv::Rect2d trackerRect;
                 tracker->update(frame, trackerRect);
-                trackedRects.push_back(trackerRect);
+                detections.push_back(trackerRect);
             }
         }
     } else {
         // We'll just use the neural network for every detection
-        trackedRects = m_network->getDetections(frame, m_imgSize);
+        detections = m_network->getDetections(frame, m_imgSize);
     }
+}
+
+void PeopleCounter::loop(cv::UMat &frame, double delta) {
+
+    m_capture >> frame;
+
+    std::vector<cv::Rect> trackedRects;
+
+    getBoxes(frame, trackedRects);
 
     // Initialize a line for detection and determine if the tracked objects have passed the line
     cv::Vec2f lineVec;

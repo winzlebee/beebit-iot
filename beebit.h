@@ -42,6 +42,8 @@ public:
     int getCurrentCount();
 private:
     void loop(cv::UMat &frame, double delta);
+    void getBoxes(const cv::UMat &frame, std::vector<cv::Rect> &detections);
+
     bool lineInitialized() const;
 
     /**
