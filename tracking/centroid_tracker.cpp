@@ -50,6 +50,7 @@ const std::map<int, cv::Point2i> &CentroidTracker::update(const std::vector<cv::
     for (int i = 0; i < boxes.size(); i++) {
         int centerX = boxes[i].x + boxes[i].width/2;
         int centerY = boxes[i].y + boxes[i].height/2;
+
         centroids.push_back(cv::Point2i(centerX, centerY));
     }
 

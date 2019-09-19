@@ -204,6 +204,7 @@ void PeopleCounter::showDebugInfo(cv::UMat &frame) {
 
     // Show debug info for all our people
     for (const auto &object : m_objects) {
+        if (object.centroids.empty()) continue;
 
         std::string pointIdText("ID: ");
         pointIdText += std::to_string(object.objectId);
