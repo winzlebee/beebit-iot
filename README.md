@@ -24,7 +24,7 @@ sudo apt install libgtkmm-3.0-dev
 3. Download the opencv contrib repository [here](https://github.com/opencv/opencv_contrib/archive/4.1.1.zip)
 4. Use the following commands to extract the archive and install OpenCV with the contrib modules. The default flags are fine.
 ```bash
-unzip opencv4.1.1.zip
+unzip opencv-4.1.1.zip
 unzip opencv_contrib-4.1.1.zip
 
 cd opencv_contrib-4.1.1/modules
