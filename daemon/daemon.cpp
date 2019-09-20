@@ -3,6 +3,7 @@
 
 #include <curl/curl.h>
 #include <thread>
+#include <atomic>
 
 #include "../bee_util.h"
 #include "../beebit.h"
@@ -10,6 +11,7 @@
 namespace beebit {
 
 const std::string configLoc = "beemon.cfg";
+std::atomic<bool> netThread = true;
 
 Daemon::Daemon(const std::string &endpoint)
     : m_lifetime(0)
@@ -18,10 +20,17 @@ Daemon::Daemon(const std::string &endpoint)
 }
 
 Daemon::~Daemon() {
-    m_countThread->join();
 }
 
 void Daemon::networkThread() {
+
+    // Responsible for sending a count update at the specified interval
+    std::chrono::seconds delayTime(std::get<int>(m_config.at("frequency")));
+
+    while (netThread) {
+        log("Network Message sent.");
+        std::this_thread::sleep_for(delayTime);
+    }
     
 }
 
@@ -41,9 +50,13 @@ void Daemon::start() {
 	peopleCounter.setDebugWindow(true);
 	//peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	
+    m_networkThread = std::make_unique<std::thread>(&Daemon::networkThread, this);
 	peopleCounter.begin();
 
-    log("Count thread started.");
+    // We've exited the main thread, so terminate the network thread
+    netThread = false;
+    m_networkThread->join();
+
 }
 
 }

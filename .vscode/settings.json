@@ -57,6 +57,7 @@
         "variant": "cpp",
         "set": "cpp",
         "cinttypes": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "hash_map": "cpp"
     }
 }

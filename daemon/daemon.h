@@ -39,8 +39,8 @@ private:
     ConfigMap m_config;
     uint32_t m_lifetime;
 
-    // The thread where the counts are being performed
-    std::unique_ptr<std::thread> m_countThread;
+    // The thread where we send data collected from the counter
+    std::unique_ptr<std::thread> m_networkThread;
 
 };
 
