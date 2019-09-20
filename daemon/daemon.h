@@ -36,7 +36,8 @@ public:
 
 private:
     void networkThread();
-    void onDetection(const DetectionResult result);
+
+    bool onDetection(const DetectionResult result);
 
     ConfigMap m_config;
     uint32_t m_lifetime;

@@ -203,7 +203,7 @@ public:
             auto end = std::chrono::high_resolution_clock::now();
             deltaTime = end-start;
 
-            m_callback({m_objects.size(), end});
+            if (!m_callback({m_objects.size(), end})) break;
 
             char key = cv::waitKey(5) & 0xFF;
             if (key == 'q') break;
