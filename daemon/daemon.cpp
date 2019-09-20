@@ -22,6 +22,12 @@ std::mutex mut;
 
 DetectionResult latestResult;
 
+// Buffer results from all libcurl requests
+size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+   return size * nmemb;
+}
+
 Daemon::Daemon()
     : m_lifetime(0)
     , m_config(readConfiguration(configLoc))
@@ -55,15 +61,30 @@ void Daemon::networkThread() {
         netThread = false;
     }
 
+    curl_slist *header = nullptr;
+    header = curl_slist_append(header, "Content-Type: application/json");
+    //header = curl_slist_append(header, "charsets: utf-8");
+
     while (netThread) {
+
+        std::stringstream stream;
+        stream << "{ " << "\"uuid\": \"" << uuid << "\", \"people\":" << latestResult.first << ", \"status\":\"Good\" }";
+        std::string sendJson = stream.str();
 
         // Perform a CURL update against the network, using the current UUID
         CURL *curl = curl_easy_init();
         if (curl) {
             CURLcode response;
             curl_easy_setopt(curl, CURLOPT_URL, (endpoint + "/bee/update").c_str());
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, sendJson.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
             response = curl_easy_perform(curl);
+
+            if (response != CURLE_OK) {
+                log("Failed to send data to server.");
+            }
+
             curl_easy_cleanup(curl);
         }
 
