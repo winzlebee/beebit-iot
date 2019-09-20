@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tracking/trackable_object.h"
+#include "util/types.h"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
@@ -19,12 +20,11 @@ class PeopleCounterImpl;
 class PeopleCounter
 {
 public:
-    PeopleCounter(int cameraIndex);
+    PeopleCounter(int cameraIndex, DetectionCallback callback);
     ~PeopleCounter();
 
     // Begin the people counting operation
     void begin();
-
     
     // Set the line to count people walking past. Normalized in screen co-ordinates.
     void setCountLine(float startx, float starty, float endx, float endy);
@@ -34,9 +34,6 @@ public:
     void disableCountLine();
 
     void setDebugWindow(bool debug);
-
-    // Retrieve the current count, as detected by the camera
-    int getCurrentCount();
 
 private:
 

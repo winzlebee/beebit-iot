@@ -47,7 +47,11 @@ cv::Point2i getPointLineIntersect(const cv::Point2i &start, const cv::Point2i &e
  */
 class PeopleCounterImpl {
 public:
-    PeopleCounterImpl(int cameraIndex, const TrackerConfiguration *config) : m_config(config), m_imgSize(cv::Size(m_config->imageWidth, m_config->imageHeight)) {
+    PeopleCounterImpl(int cameraIndex, const TrackerConfiguration *config, DetectionCallback cb)
+        : m_config(config)
+        , m_imgSize(cv::Size(m_config->imageWidth, m_config->imageHeight))
+        , m_callback(cb) {
+
         log("Loading Model");
 
         m_network = std::make_unique<BeeNet>(m_config);
@@ -199,6 +203,8 @@ public:
             auto end = std::chrono::high_resolution_clock::now();
             deltaTime = end-start;
 
+            m_callback(m_objects.size(), end);
+
             char key = cv::waitKey(5) & 0xFF;
             if (key == 'q') break;
 
@@ -265,10 +271,6 @@ public:
         m_trackLine = false;
     }
 
-    int getCurrentCount() {
-        return m_objects.size();
-    }
-
 private:
     const TrackerConfiguration *m_config;
     const cv::Size m_imgSize;
@@ -298,10 +300,13 @@ private:
 
     uint64_t m_totalFrames;
 
+    // Callback when the count changes
+    DetectionCallback m_callback;
+
 };
 
-PeopleCounter::PeopleCounter(int cameraIndex) : m_config(loadTrackerConfig()), m_cameraIndex(cameraIndex) {
-    m_impl = std::make_unique<PeopleCounterImpl>(m_cameraIndex, m_config);
+PeopleCounter::PeopleCounter(int cameraIndex, DetectionCallback cb) : m_config(loadTrackerConfig()), m_cameraIndex(cameraIndex) {
+    m_impl = std::make_unique<PeopleCounterImpl>(m_cameraIndex, m_config, cb);
 }
 
 PeopleCounter::~PeopleCounter() {
@@ -325,10 +330,6 @@ void PeopleCounter::enableCountLine() {
 
 void PeopleCounter::disableCountLine() {
     m_impl->disableCountLine();
-}
-
-int PeopleCounter::getCurrentCount() {
-    return m_impl->getCurrentCount();
 }
 
 void PeopleCounter::setDebugWindow(bool debug) {

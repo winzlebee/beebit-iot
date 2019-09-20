@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include <thread>
 #include <atomic>
+#include <functional>
 
 #include "../bee_util.h"
 #include "../beebit.h"
@@ -20,6 +21,10 @@ Daemon::Daemon(const std::string &endpoint)
 }
 
 Daemon::~Daemon() {
+}
+
+void Daemon::onDetection(int count, std::chrono::system_clock::time_point timePoint) {
+    log(count);
 }
 
 void Daemon::networkThread() {
@@ -45,8 +50,9 @@ void Daemon::start() {
         cameraIndex = 0;
     }
 
-
-    beebit::PeopleCounter peopleCounter(cameraIndex);
+    auto detectFunc = std::bind(&Daemon::onDetection, this, std::placeholders::_1, std::placeholders::_2);
+    
+    beebit::PeopleCounter peopleCounter(cameraIndex, detectFunc);
 	peopleCounter.setDebugWindow(true);
 	//peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	

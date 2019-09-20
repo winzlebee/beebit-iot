@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <chrono>
 
 #include "../util/types.h"
 
@@ -35,6 +36,7 @@ public:
 
 private:
     void networkThread();
+    void onDetection(int count, std::chrono::system_clock::time_point timePoint);
 
     ConfigMap m_config;
     uint32_t m_lifetime;
