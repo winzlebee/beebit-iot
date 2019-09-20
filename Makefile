@@ -1,28 +1,32 @@
-
-CC=g++ -std=c++17
+# Make up to C++17 standard for variant types.
 OBJECTS=main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
-LIBS=-lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lopencv_tracking -lpthread -lcurl -I/usr/local/include/opencv4
+LIBS= -std=c++17 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lopencv_tracking -lpthread -lcurl -I/usr/local/include/opencv4
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
-release : $(OBJECTS)
-	$(CC) $(OBJECTS) $(LIBS) -o $(OUTPUT) -O3
+all: release
 
-debug : $(OBJECTS)
-	$(CC) $(OBJECTS) $(LIBS) -o $(OUTPUT) -g
+debug : LIBS += -g
+debug : build
+
+release : LIBS += -O3
+release : build
+
+build : $(OBJECTS)
+	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
 
 main.o : beebit.h main.cpp
-	$(CC) -c $(LIBS) main.cpp 
+	$(CXX) -c $(LIBS) main.cpp 
 daemon.o : daemon/daemon.h daemon/daemon.cpp
-	$(CC) -c $(LIBS) daemon/daemon.cpp
+	$(CXX) -c $(LIBS) daemon/daemon.cpp
 beebit.o : beebit.h bee_util.h net/beenet.h tracking/centroid_tracker.h tracking/trackable_object.h beebit.cpp
-	$(CC) -c $(LIBS) beebit.cpp
+	$(CXX) -c $(LIBS) beebit.cpp
 bee_util.o : bee_util.h bee_util.cpp
-	$(CC) -c $(LIBS) bee_util.cpp
+	$(CXX) -c $(LIBS) bee_util.cpp
 centroid_tracker.o : tracking/centroid_tracker.h tracking/centroid_tracker.cpp
-	$(CC) -c $(LIBS) tracking/centroid_tracker.cpp
+	$(CXX) -c $(LIBS) tracking/centroid_tracker.cpp
 beenet.o : net/beenet.h net/beenet.cpp
-	$(CC) -c $(LIBS) net/beenet.cpp
+	$(CXX) -c $(LIBS) net/beenet.cpp
 
 # The install target downloads all the weights and config files needed
 deps: debug

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 
 namespace beebit {
 
@@ -24,6 +25,12 @@ template<class... Ts>
 std::ostream& operator<<(std::ostream& os, streamer<std::variant<Ts...>> sv) {
    std::visit([&os](const auto& v) { os << streamer{v}; }, sv.val);
    return os;
+}
+
+bool is_number(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(), 
+        s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }
 
 ConfigMap readConfiguration(const std::string &location) {
@@ -56,9 +63,9 @@ ConfigMap readConfiguration(const std::string &location) {
         if (isDecimal) {
             lineElement = (float) atof(segments[1].c_str());
         } else {
-            lineElement = atoi(segments[1].c_str());
-            if (std::get<int>(lineElement) == 0) {
-                // Store the value as a string
+            if (is_number(segments[1])) {
+                lineElement = atoi(segments[1].c_str());
+            } else {
                 lineElement = segments[1];
             }
         }
@@ -71,16 +78,10 @@ ConfigMap readConfiguration(const std::string &location) {
 
 }
 
-void writeConfiguration(const std::string &location, const ConfigMap &newMap) {
-    std::ofstream outFile(location);
-
-    if (!outFile) {
-        return;
-    }
-
+void writeConfiguration(std::ostream &out, const ConfigMap &newMap) {
     // Write all the elements as key-value pairs
     for (const auto &pair : newMap) {
-        outFile << pair.first << '=' << streamer{pair.second} << std::endl;
+        out << pair.first << '=' << streamer{pair.second} << std::endl;
     }
 
 }

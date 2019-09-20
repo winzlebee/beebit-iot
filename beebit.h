@@ -9,15 +9,12 @@
 #include <memory>
 #include <string>
 
-namespace std {
-    class thread;
-}
-
 namespace beebit {
 
 struct TrackerConfiguration;
 class CentroidTracker;
 class BeeNet;
+class PeopleCounterImpl;
 
 class PeopleCounter
 {
@@ -26,25 +23,25 @@ public:
     ~PeopleCounter();
 
     // Begin the people counting operation
-    std::thread *begin();
+    void begin();
 
     
     // Set the line to count people walking past. Normalized in screen co-ordinates.
-    /*void setCountLine(float startx, float starty, float endx, float endy);
+    void setCountLine(float startx, float starty, float endx, float endy);
     void setCountLine(const cv::Point2f &start, const cv::Point2f &end);
 
     void enableCountLine();
-    void disableCountLine();*/
+    void disableCountLine();
 
     void setDebugWindow(bool debug);
 
     // Retrieve the current count, as detected by the camera
-    //int getCurrentCount();
+    int getCurrentCount();
 
 private:
-    void startThread(int camIndex, bool debugWindow);
 
     TrackerConfiguration *m_config;
+    std::unique_ptr<PeopleCounterImpl> m_impl;
 
     int m_cameraIndex;
     bool m_debug;

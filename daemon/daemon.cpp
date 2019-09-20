@@ -21,13 +21,27 @@ Daemon::~Daemon() {
     m_countThread->join();
 }
 
+void Daemon::networkThread() {
+    
+}
+
 void Daemon::start() {
 
-    beebit::PeopleCounter peopleCounter(0);
+    std::size_t cameraIndex;
+
+    try {
+        cameraIndex = std::get<int>(m_config.at("camera_index"));
+    } catch (std::bad_variant_access &ex) {
+        log("Invalid config camera index. Using default.");
+        cameraIndex = 0;
+    }
+
+
+    beebit::PeopleCounter peopleCounter(cameraIndex);
 	peopleCounter.setDebugWindow(true);
 	//peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	
-	m_countThread.reset(peopleCounter.begin());
+	peopleCounter.begin();
 
     log("Count thread started.");
 }

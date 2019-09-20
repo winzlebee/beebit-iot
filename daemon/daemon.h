@@ -34,6 +34,8 @@ public:
     void start();
 
 private:
+    void networkThread();
+
     ConfigMap m_config;
     uint32_t m_lifetime;
 

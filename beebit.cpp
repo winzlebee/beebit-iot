@@ -13,7 +13,6 @@
 
 #include <chrono>
 #include <numeric>
-#include <thread>
 
 namespace beebit {
 
@@ -302,28 +301,38 @@ private:
 };
 
 PeopleCounter::PeopleCounter(int cameraIndex) : m_config(loadTrackerConfig()), m_cameraIndex(cameraIndex) {
-
+    m_impl = std::make_unique<PeopleCounterImpl>(m_cameraIndex, m_config);
 }
 
 PeopleCounter::~PeopleCounter() {
 }
 
-void PeopleCounter::startThread(int camIndex, bool debugWindow) {
-    // Construct a people counter
-    PeopleCounterImpl impl(camIndex, m_config);
-    
-    // Settings for this detection
-    impl.setDebugWindow(debugWindow);
-
-    impl.begin();
+void PeopleCounter::begin() {
+    m_impl->begin();
 }
 
-std::thread *PeopleCounter::begin() {
-    return new std::thread(&PeopleCounter::startThread, this, m_cameraIndex, m_debug);
+void PeopleCounter::setCountLine(float startx, float starty, float endx, float endy) {
+    m_impl->setCountLine(startx, starty, endx, endy);
+}
+
+void PeopleCounter::setCountLine(const cv::Point2f &start, const cv::Point2f &end) {
+    m_impl->setCountLine(start, end);
+}
+
+void PeopleCounter::enableCountLine() {
+    m_impl->enableCountLine();
+}
+
+void PeopleCounter::disableCountLine() {
+    m_impl->disableCountLine();
+}
+
+int PeopleCounter::getCurrentCount() {
+    return m_impl->getCurrentCount();
 }
 
 void PeopleCounter::setDebugWindow(bool debug) {
-
+    m_impl->setDebugWindow(debug);
 }
 
 }

@@ -14,7 +14,7 @@ namespace beebit {
  * @return ConfigMap 
  */
 ConfigMap readConfiguration(const std::string &location);
-void writeConfiguration(const std::string &location, const ConfigMap &newMap);
+void writeConfiguration(std::ostream &out, const ConfigMap &newMap);
 
 // Contains default configuration variables
 struct TrackerConfiguration {
