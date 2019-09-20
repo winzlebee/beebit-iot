@@ -17,7 +17,7 @@ build : $(OBJECTS)
 
 main.o : beebit.h main.cpp
 	$(CXX) -c $(LIBS) main.cpp 
-daemon.o : daemon/daemon.h daemon/daemon.cpp
+daemon.o : daemon/daemon.h daemon/daemon.cpp util/types.h
 	$(CXX) -c $(LIBS) daemon/daemon.cpp
 beebit.o : beebit.h bee_util.h net/beenet.h tracking/centroid_tracker.h tracking/trackable_object.h beebit.cpp util/types.h
 	$(CXX) -c $(LIBS) beebit.cpp

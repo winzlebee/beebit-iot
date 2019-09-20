@@ -1,13 +1,17 @@
 
 #include "daemon.h"
 
+extern "C" {
 #include <curl/curl.h>
+}
+
 #include <thread>
 #include <atomic>
 #include <functional>
 
 #include "../bee_util.h"
 #include "../beebit.h"
+#include "../util/types.h"
 
 namespace beebit {
 
@@ -23,16 +27,25 @@ Daemon::Daemon(const std::string &endpoint)
 Daemon::~Daemon() {
 }
 
-void Daemon::onDetection(int count, std::chrono::system_clock::time_point timePoint) {
-    log(count);
+void Daemon::onDetection(const DetectionResult result) {
+    log(result.first);
 }
 
 void Daemon::networkThread() {
 
     // Responsible for sending a count update at the specified interval
-    std::chrono::seconds delayTime(std::get<int>(m_config.at("frequency")));
+    std::chrono::seconds delayTime(20);
+    try {
+        delayTime = std::chrono::seconds(std::get<int>(m_config.at("frequency")));
+    } catch (const std::bad_variant_access &ex) {
+        log("Invalid delay in config.");
+    }
 
     while (netThread) {
+
+        // Perform a CURL update against the network, using the current UUID
+        
+
         log("Network Message sent.");
         std::this_thread::sleep_for(delayTime);
     }
@@ -50,8 +63,8 @@ void Daemon::start() {
         cameraIndex = 0;
     }
 
-    auto detectFunc = std::bind(&Daemon::onDetection, this, std::placeholders::_1, std::placeholders::_2);
-    
+    auto detectFunc = std::bind(&Daemon::onDetection, this, std::placeholders::_1);
+
     beebit::PeopleCounter peopleCounter(cameraIndex, detectFunc);
 	peopleCounter.setDebugWindow(true);
 	//peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);

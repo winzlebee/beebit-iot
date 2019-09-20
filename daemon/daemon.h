@@ -36,7 +36,7 @@ public:
 
 private:
     void networkThread();
-    void onDetection(int count, std::chrono::system_clock::time_point timePoint);
+    void onDetection(const DetectionResult result);
 
     ConfigMap m_config;
     uint32_t m_lifetime;

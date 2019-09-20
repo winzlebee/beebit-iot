@@ -13,6 +13,8 @@ namespace beebit {
  */
 typedef std::map<std::string, std::variant<int, float, std::string> > ConfigMap;
 
-typedef std::function<void(int, std::chrono::system_clock::time_point)> DetectionCallback;
+typedef std::pair<int, std::chrono::system_clock::time_point> DetectionResult;
+
+typedef std::function<void(const DetectionResult)> DetectionCallback;
 
 }
