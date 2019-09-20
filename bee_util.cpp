@@ -3,20 +3,92 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 
 namespace beebit {
 
 static const std::string CONFIG_FILE_NAME = "beebit.cfg";
 
-Configuration *loadConfig() {
-    static Configuration conf;
+template<class T>
+struct streamer {
+    const T& val;
+};
+template<class T> streamer(T) -> streamer<T>;
+
+template<class T>
+std::ostream& operator<<(std::ostream& os, streamer<T> s) {
+    os << s.val;
+    return os;
+}
+
+template<class... Ts>
+std::ostream& operator<<(std::ostream& os, streamer<std::variant<Ts...>> sv) {
+   std::visit([&os](const auto& v) { os << streamer{v}; }, sv.val);
+   return os;
+}
+
+bool is_number(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(), 
+        s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+}
+
+ConfigMap readConfiguration(const std::string &location) {
+
+    std::ifstream inFile(location.c_str());
+    ConfigMap readResult;
+
+    if (!inFile) {
+        return readResult;
+    }
+
+    // Read the lines of the config into the configuration map
+    std::string currentLine;
+    while (std::getline(inFile, currentLine)) {
+        if (currentLine.at(0) == '#') continue;
+
+        // For the current line, separate the configuration into a set of keys and values
+        std::stringstream lineStream(currentLine);
+        std::string segments[2];
+
+        for (int i = 0; i < 2; i++) {
+            std::getline(lineStream, segments[i], '=');
+        }
+        
+        std::variant<int, std::string> lineElement;
+
+        // Check if the string has a decimal point
+        if (is_number(segments[1])) {
+            lineElement = atoi(segments[1].c_str());
+        } else {
+            lineElement = segments[1];
+        }
+
+        // Insert the key and value into a map as a named pair
+        readResult.insert(std::make_pair(segments[0], lineElement));
+    }
+
+    return readResult;
+
+}
+
+void writeConfiguration(std::ostream &out, const ConfigMap &newMap) {
+    // Write all the elements as key-value pairs
+    for (const auto &pair : newMap) {
+        out << pair.first << '=' << streamer{pair.second} << std::endl;
+    }
+
+}
+
+TrackerConfiguration *loadTrackerConfig() {
+    static TrackerConfiguration conf;
 
     std::ifstream inFile;
     inFile.open(CONFIG_FILE_NAME);
 
     if (!inFile) {
         log("Config file not found. Creating...");
-        writeConfig(conf);
+        writeTrackerConfig(conf);
         return &conf;
     }
 
@@ -58,6 +130,8 @@ Configuration *loadConfig() {
                 conf.maxDisappeared = stoi(segments[1]);
             } else if (segments[0] == "searchDistance") {
                 conf.searchDistance = stoi(segments[1]);
+            } else if (segments[0] == "useTracking") {
+                conf.useTracking = bool(stoi(segments[1]));
             }
 
         } catch (std::invalid_argument &exception) {
@@ -69,7 +143,7 @@ Configuration *loadConfig() {
     return &conf;
 }
 
-void writeConfig(const Configuration &conf) {
+void writeTrackerConfig(const TrackerConfiguration &conf) {
     std::ofstream outFile(CONFIG_FILE_NAME);
 
     outFile << "# BeeBit Configuration" << std::endl;
@@ -85,6 +159,7 @@ void writeConfig(const Configuration &conf) {
     outFile << "neuralNetQuality=" << conf.neuralNetQuality << std::endl;
     outFile << "maxDisappeared=" << conf.maxDisappeared << std::endl;
     outFile << "searchDistance=" << conf.searchDistance << std::endl;
+    outFile << "useTracking=" << conf.useTracking << std::endl;
     
     outFile << std::endl;
 

@@ -1,11 +1,11 @@
 
-#include "beebit.h"
-#include <iostream>
+#include "daemon/daemon.h"
 
 int main(int argc, char *argv[]) {
-	beebit::PeopleCounter peopleCounter(0);
-	peopleCounter.setBoxes(true);
-	//peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
-	
-	peopleCounter.begin();
+
+	// Start the daemon and begin listening
+	beebit::Daemon daemon;
+	daemon.start();
+
+	return 0;
 }

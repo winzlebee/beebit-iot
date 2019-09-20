@@ -42,7 +42,7 @@ std::vector<cv::Rect> BeeNet::blobToRects(const cv::UMat &frame, const std::vect
     return boxes;
 }
 
-BeeNet::BeeNet(const Configuration *config) : m_config(config), m_netSize(cv::Size(config->neuralNetQuality, config->neuralNetQuality)) {
+BeeNet::BeeNet(const TrackerConfiguration *config) : m_config(config), m_netSize(cv::Size(config->neuralNetQuality, config->neuralNetQuality)) {
     m_network = std::make_unique<cv::dnn::Net>(cv::dnn::readNetFromDarknet(m_config->configLocation, m_config->modelLocation));
 
     m_outputLayerNames = m_network->getUnconnectedOutLayersNames();
