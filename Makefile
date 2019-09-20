@@ -15,7 +15,7 @@ release : build
 build : $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
 
-main.o : beebit.h main.cpp
+main.o : daemon/daemon.h main.cpp
 	$(CXX) -c $(LIBS) main.cpp 
 daemon.o : daemon/daemon.h daemon/daemon.cpp util/types.h
 	$(CXX) -c $(LIBS) daemon/daemon.cpp

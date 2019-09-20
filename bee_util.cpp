@@ -55,19 +55,13 @@ ConfigMap readConfiguration(const std::string &location) {
             std::getline(lineStream, segments[i], '=');
         }
         
-        std::variant<int, float, std::string> lineElement;
+        std::variant<int, std::string> lineElement;
 
         // Check if the string has a decimal point
-        const bool isDecimal = segments[1].find('.') != std::string::npos;
-
-        if (isDecimal) {
-            lineElement = (float) atof(segments[1].c_str());
+        if (is_number(segments[1])) {
+            lineElement = atoi(segments[1].c_str());
         } else {
-            if (is_number(segments[1])) {
-                lineElement = atoi(segments[1].c_str());
-            } else {
-                lineElement = segments[1];
-            }
+            lineElement = segments[1];
         }
 
         // Insert the key and value into a map as a named pair

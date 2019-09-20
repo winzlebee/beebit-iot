@@ -25,7 +25,7 @@ public:
      * 
      * @param endpoint The URL that will be used for all queries.
      */
-    Daemon(const std::string &endpoint);
+    Daemon();
     ~Daemon();
 
     /**
