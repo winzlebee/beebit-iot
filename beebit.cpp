@@ -52,14 +52,15 @@ public:
 
         log("Loading Model");
 
-        //m_network = std::make_unique<BeeNet>(m_config);
+        m_network = std::make_unique<BeeNet>(m_config);
         cv::ocl::setUseOpenCL(m_config->useOpenCL);
 
         log("Opening Camera");
         m_capture.open();
 
-        m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_imgSize.width);
-        m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_imgSize.height);
+        int width = m_capture.get(cv::CAP_PROP_FRAME_WIDTH);
+        int height = m_capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+	m_imgSize = cv::Size(width, height);
 
         // Initialize the BeeBit tracker
         log("Initializing tracker");
@@ -244,7 +245,7 @@ public:
 
 private:
     const TrackerConfiguration *m_config;
-    const cv::Size m_imgSize;
+    cv::Size m_imgSize;
 
     raspicam::RaspiCam_Cv m_capture;
 
