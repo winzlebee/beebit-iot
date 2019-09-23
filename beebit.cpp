@@ -1,6 +1,4 @@
-#ifdef BEEBIT_PI
 #include <raspicam/raspicam_cv.h>
-#endif
 
 #include <opencv2/core/ocl.hpp>
 
@@ -72,7 +70,7 @@ public:
         m_totalFrames = 0;
     }
 
-    void getBoxes(const cv::UMat &frame, std::vector<cv::Rect> &detections) {
+    void getBoxes(const cv::Mat &frame, std::vector<cv::Rect> &detections) {
         if (m_config->useTracking) {
             // Only perform the expensive neural net detections every skipFrames
             if (m_totalFrames % m_config->skipFrames == 0) {
@@ -104,9 +102,10 @@ public:
         }
     }
 
-    void loop(cv::UMat &frame, double delta) {
+    void loop(cv::Mat &frame, double delta) {
 
-        m_capture >> frame;
+        m_capture.grab();
+        m_capture.retrieve(frame);
 
         std::vector<cv::Rect> trackedRects;
 
@@ -185,7 +184,7 @@ public:
 
     void begin() {
         // Start the tracking process
-        cv::UMat frame;
+        cv::Mat frame;
 
         if (m_debug) cv::namedWindow("BeeTrack");
 
@@ -214,7 +213,7 @@ public:
         log("Main loop exited.");
     }
 
-    void showDebugInfo(cv::UMat &frame) {
+    void showDebugInfo(cv::Mat &frame) {
 
         // Show debug info for all our people
         for (const auto &object : m_objects) {
@@ -275,7 +274,7 @@ private:
     const TrackerConfiguration *m_config;
     const cv::Size m_imgSize;
 
-    cv::VideoCapture m_capture;
+    raspicam::RaspiCam_Cv m_capture;
 
     // Network and tracking
     std::unique_ptr<BeeNet> m_network;
