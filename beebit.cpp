@@ -71,34 +71,10 @@ public:
     }
 
     void getBoxes(const cv::Mat &frame, std::vector<cv::Rect> &detections) {
-        if (m_config->useTracking) {
-            // Only perform the expensive neural net detections every skipFrames
-            if (m_totalFrames % m_config->skipFrames == 0) {
-                m_trackers.clear();
-
-                std::vector<cv::Rect> detect = m_network->getDetections(frame, m_imgSize);
-
-                for (const auto &rect : detect) {
-
-                    // Generate a tracker and add it to the list of trackers
-                    if (m_config->useCSRT) {
-                        m_trackers.push_back(cv::TrackerCSRT::create());
-                    } else {
-                        m_trackers.push_back(cv::TrackerKCF::create());
-                    }
-                    m_trackers.back()->init(frame, rect);
-                }   
-
-            } else {
-                for (const auto &tracker : m_trackers) {
-                    cv::Rect2d trackerRect;
-                    tracker->update(frame, trackerRect);
-                    detections.push_back(trackerRect);
-                }
-            }
-        } else {
-            // We'll just use the neural network for every detection
-            detections = m_network->getDetections(frame, m_imgSize);
+        for (const auto &tracker : m_trackers) {
+            cv::Rect2d trackerRect;
+            tracker->update(frame, trackerRect);
+            detections.push_back(trackerRect);
         }
     }
 
@@ -279,9 +255,6 @@ private:
     // Network and tracking
     std::unique_ptr<BeeNet> m_network;
     std::unique_ptr<CentroidTracker> m_tracker;
-
-    // The trackers that track individual people in the frame
-    std::vector<cv::Ptr<cv::Tracker> > m_trackers;
 
     // The objects that are currently being tracked
     std::vector<TrackableObject> m_objects;
