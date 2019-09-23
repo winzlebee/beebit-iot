@@ -16,7 +16,7 @@ namespace beebit {
 
 const std::string configLoc = "beemon.cfg";
 
-std::atomic<bool> netThread = true;
+std::atomic<bool> netThread(true);
 
 std::mutex mut;
 
