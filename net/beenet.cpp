@@ -9,7 +9,7 @@ namespace beebit {
 const float dnnScale = 0.00392f;
 
 // Take a blob generated on an output for a Neural Network and generate Rectangles for the defined class
-std::vector<cv::Rect> BeeNet::blobToRects(const cv::UMat &frame, const std::vector<cv::Mat> &blob, const cv::Size &finalSize) {
+std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vector<cv::Mat> &blob, const cv::Size &finalSize) {
     static std::vector<int> outLayers = m_network->getUnconnectedOutLayers();
     static std::string outLayerType = m_network->getLayer(outLayers[0])->type;
 
@@ -53,8 +53,8 @@ BeeNet::~BeeNet() {
     
 }
 
-std::vector<cv::Rect> BeeNet::getDetections(const cv::UMat &frame, const cv::Size &screenSize) {
-    cv::UMat detectFrame;
+std::vector<cv::Rect> BeeNet::getDetections(const cv::Mat &frame, const cv::Size &screenSize) {
+    cv::Mat detectFrame;
     cv::resize(frame, detectFrame, m_netSize);
 
     if (frame.empty()) return {};

@@ -1,6 +1,6 @@
 # Make up to C++17 standard for variant types.
 OBJECTS=main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
-LIBS= -std=c++17 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lopencv_tracking -lpthread -lcurl -I/usr/local/include/opencv4
+LIBS= -std=c++17 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lraspicam -lopencv_tracking -lpthread -lcurl -I/usr/local/include/opencv4
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
