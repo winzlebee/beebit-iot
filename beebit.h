@@ -5,7 +5,6 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
-#include <opencv2/tracking.hpp>
 
 #include <memory>
 #include <string>
