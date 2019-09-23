@@ -9,30 +9,6 @@ namespace beebit {
 
 static const std::string CONFIG_FILE_NAME = "beebit.cfg";
 
-template<class T>
-struct streamer {
-    const T& val;
-};
-template<class T> streamer(T) -> streamer<T>;
-
-template<class T>
-std::ostream& operator<<(std::ostream& os, streamer<T> s) {
-    os << s.val;
-    return os;
-}
-
-template<class... Ts>
-std::ostream& operator<<(std::ostream& os, streamer<std::variant<Ts...>> sv) {
-   std::visit([&os](const auto& v) { os << streamer{v}; }, sv.val);
-   return os;
-}
-
-bool is_number(const std::string& s)
-{
-    return !s.empty() && std::find_if(s.begin(), 
-        s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
-}
-
 ConfigMap readConfiguration(const std::string &location) {
 
     std::ifstream inFile(location.c_str());
@@ -55,14 +31,10 @@ ConfigMap readConfiguration(const std::string &location) {
             std::getline(lineStream, segments[i], '=');
         }
         
-        std::variant<int, std::string> lineElement;
+        std::string lineElement;
 
         // Check if the string has a decimal point
-        if (is_number(segments[1])) {
-            lineElement = atoi(segments[1].c_str());
-        } else {
-            lineElement = segments[1];
-        }
+        lineElement = segments[1];
 
         // Insert the key and value into a map as a named pair
         readResult.insert(std::make_pair(segments[0], lineElement));
@@ -75,7 +47,7 @@ ConfigMap readConfiguration(const std::string &location) {
 void writeConfiguration(std::ostream &out, const ConfigMap &newMap) {
     // Write all the elements as key-value pairs
     for (const auto &pair : newMap) {
-        out << pair.first << '=' << streamer{pair.second} << std::endl;
+        out << pair.first << '=' << pair.second << std::endl;
     }
 
 }

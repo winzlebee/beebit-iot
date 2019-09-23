@@ -52,12 +52,13 @@ void Daemon::networkThread() {
     std::chrono::seconds delayTime;
     std::string uuid;
     std::string endpoint;
+
     try {
-        delayTime = std::chrono::seconds(std::get<int>(m_config.at("frequency")));
-        uuid = std::get<std::string>(m_config.at("uuid"));
-        endpoint = std::get<std::string>(m_config.at("endpoint"));
-    } catch (const std::bad_variant_access &ex) {
-        log("Invalid value in config. Exiting network thread...");
+        delayTime = std::chrono::seconds(std::stoi(m_config.at("frequency")));
+        uuid = (m_config.at("uuid"));
+        endpoint = (m_config.at("endpoint"));
+    } catch (std::invalid_argument &ex) {
+        log("Invalid value in config! Stopping network...");
         netThread = false;
     }
 
@@ -99,8 +100,8 @@ void Daemon::start() {
     std::size_t cameraIndex;
 
     try {
-        cameraIndex = std::get<int>(m_config.at("camera_index"));
-    } catch (std::bad_variant_access &ex) {
+        cameraIndex = stoi(m_config.at("camera_index"));
+    } catch (std::invalid_argument &ex) {
         log("Invalid config camera index. Using default.");
         cameraIndex = 0;
     }
