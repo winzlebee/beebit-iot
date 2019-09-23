@@ -56,7 +56,7 @@ public:
         cv::ocl::setUseOpenCL(m_config->useOpenCL);
 
         log("Opening Camera");
-        m_capture.open(cameraIndex);
+        m_capture.open();
 
         m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_imgSize.width);
         m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_imgSize.height);
@@ -71,11 +71,7 @@ public:
     }
 
     void getBoxes(const cv::Mat &frame, std::vector<cv::Rect> &detections) {
-        for (const auto &tracker : m_trackers) {
-            cv::Rect2d trackerRect;
-            tracker->update(frame, trackerRect);
-            detections.push_back(trackerRect);
-        }
+        detections = m_network->getDetections(frame, m_imgSize);
     }
 
     void loop(cv::Mat &frame, double delta) {
