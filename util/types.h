@@ -1,7 +1,6 @@
 
 #include <map>
 #include <string>
-#include <variant>
 #include <chrono>
 #include <functional>
 
@@ -11,7 +10,7 @@ namespace beebit {
  * @brief A set of name/value pairs representing config values
  * 
  */
-typedef std::map<std::string, std::variant<int, std::string> > ConfigMap;
+typedef std::map<std::string, std::string > ConfigMap;
 
 /**
  * @brief Represents a single result of the detection process
