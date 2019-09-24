@@ -42,6 +42,7 @@ bool Daemon::onDetection(const DetectionResult result) {
 
     // TODO: Log results to a local database and cache them for when the network fails?
     latestResult = result;
+    log(latestResult.first);
 
     return netThread;
 }
@@ -109,8 +110,8 @@ void Daemon::start() {
     auto detectFunc = std::bind(&Daemon::onDetection, this, std::placeholders::_1);
 
     beebit::PeopleCounter peopleCounter(cameraIndex, detectFunc);
-	peopleCounter.setDebugWindow(true);
-	//peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
+    //peopleCounter.setDebugWindow(true);
+    //peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	
     m_networkThread = std::make_unique<std::thread>(&Daemon::networkThread, this);
 	peopleCounter.begin();

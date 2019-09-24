@@ -58,9 +58,8 @@ public:
         log("Opening Camera");
         m_capture.open();
 
-        int width = m_capture.get(cv::CAP_PROP_FRAME_WIDTH);
-        int height = m_capture.get(cv::CAP_PROP_FRAME_HEIGHT);
-	m_imgSize = cv::Size(width, height);
+	//m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_imgSize.width);
+	//m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_imgSize.height);
 
         // Initialize the BeeBit tracker
         log("Initializing tracker");
@@ -79,6 +78,8 @@ public:
 
         m_capture.grab();
         m_capture.retrieve(frame);
+
+	cv::resize(frame, frame, m_imgSize);
 
         std::vector<cv::Rect> trackedRects;
 
