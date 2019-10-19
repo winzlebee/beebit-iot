@@ -31,6 +31,7 @@ make clean
 
 ### Raspberry Pi
 Support for *raspbian* or any armhf debian distribution is provided by a unified install script.
+
 **NOTE:** This process installs all the dependencies and sets up the tracker to run on boot of the device. It will use a lot of CPU. The beebit service can be disabled with `systemctl beebit stop`
 
 ```bash

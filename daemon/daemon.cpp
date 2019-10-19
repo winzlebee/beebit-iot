@@ -30,7 +30,9 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
     char *charBuff = static_cast<char*>(buffer);
     std::string recievedString(charBuff, nmemb);
 
-    std::cout << "Response: " << nmemb << std::endl;
+    std::cout << "Response: " << recievedString << std::endl;
+
+    
 
     // The number of bytes recieved by this transfer
     return size * nmemb;

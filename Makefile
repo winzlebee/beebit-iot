@@ -6,6 +6,9 @@ OUTPUT=beetrack
 
 all: release
 
+raspi : LIBS += -DRASPI_ENABLE=1
+raspi : build
+
 debug : LIBS += -g
 debug : build
 
