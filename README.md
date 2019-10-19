@@ -22,10 +22,20 @@ sudo ./scripts/install_opencv.sh
 make deps && ./beetrack
 ```
 
-### Uninstallation
-If you'd like to uninstall the dependencies at any time, simply run;
+#### Uninstallation
+If you'd like to uninstall the dependencies and tracker at any time, simply run;
 ```bash
+make clean
 ./scripts/install_opencv.sh uninstall
+```
+
+### Raspberry Pi
+Support for *raspbian* or any armhf debian distribution is provided by a unified install script.
+**NOTE:** This process installs all the dependencies and sets up the tracker to run on boot of the device. It will use a lot of CPU. The beebit service can be disabled with `systemctl beebit stop`
+
+```bash
+chmod +x ./scripts/install_raspi.sh
+sudo ./scripts/install_raspi.sh
 ```
 
 ### Manual installation of OpenCV libraries
@@ -34,7 +44,7 @@ If for some reason the install script doesn't work, the below instructions shoul
 
 1. Install all the required dependencies.
 ```bash
-sudo apt install libcurl4-openssl-dev build-essential
+sudo apt install libcurl4-openssl-dev build-essential libgtk2.0-dev
 ```
 2. Download opencv **4.1.1** (the lastest version as of the time of writing) from [here](https://github.com/opencv/opencv/archive/4.1.1.zip)
 3. Download the opencv contrib repository [here](https://github.com/opencv/opencv_contrib/archive/4.1.1.zip)

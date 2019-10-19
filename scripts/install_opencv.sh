@@ -10,6 +10,8 @@ if [ "$1" == "uninstall" ]; then
     exit 0
 fi
 
+sudo apt install libgtk2.0-dev
+
 # Download OpenCV and the relevant libraries
 mkdir opencv_install && cd opencv_install
 WORKING_DIR=`pwd`
