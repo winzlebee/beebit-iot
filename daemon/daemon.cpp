@@ -50,6 +50,7 @@ bool Daemon::onDetection(const DetectionResult result) {
 
     // TODO: Log results to a local database and cache them for when the network fails?
     latestResult = result;
+    log(latestResult.first);
 
     return netThread;
 }
