@@ -8,6 +8,7 @@
 #include <functional>
 #include <mutex>
 #include <cstring>
+#include <algorithm>
 
 #include "../bee_util.h"
 #include "../beebit.h"
@@ -79,9 +80,22 @@ void Daemon::networkThread() {
         std::stringstream stream;
         stream << "{ " << 
             "\"uuid\": \"" << uuid << "\", " << 
-            "\"people\":" << latestResult.first << ", " << 
-            "\"timestamp\":" << std::chrono::duration_cast<std::chrono::seconds>(latestResult.second.time_since_epoch()).count() << ", " <<
-            "\"status\":\"Good\" }";
+            "\"people\":" << latestResult.first.size() << ", " << 
+            "\"timestamp\":" << std::chrono::duration_cast<std::chrono::seconds>(latestResult.second.time_since_epoch()).count() << ", ";
+
+        // Send all the IDs and their positions on the screen, normalized
+        stream << "\"trackers\": [";
+        std::vector<TrackableObject> &people = latestResult.first;
+        for (const TrackableObject &person : people) {
+            stream << "{";
+            stream << "\"id\":" << person.objectId << ", ";
+            stream << "\"x\":" << person.centroids.back().x/((float) (loadTrackerConfig()->imageWidth)) << ",";
+            stream << "\"y\":" << person.centroids.back().y/((float) (loadTrackerConfig()->imageHeight));
+            stream << "}";
+        }
+        stream << "], ";
+
+        stream << "\"status\":\"Good\" }";
         std::string sendJson = stream.str();
 
         // Perform a CURL update against the network, using the current UUID

@@ -54,6 +54,11 @@ void writeConfiguration(std::ostream &out, const ConfigMap &newMap) {
 
 TrackerConfiguration *loadTrackerConfig() {
     static TrackerConfiguration conf;
+    static bool loaded = false;
+
+    if (loaded) {
+        return &conf;
+    }
 
     std::ifstream inFile;
     inFile.open(CONFIG_FILE_NAME);
@@ -61,6 +66,7 @@ TrackerConfiguration *loadTrackerConfig() {
     if (!inFile) {
         log("Config file not found. Creating...");
         writeTrackerConfig(conf);
+        loaded = true;
         return &conf;
     }
 
@@ -110,6 +116,7 @@ TrackerConfiguration *loadTrackerConfig() {
         }
     }
 
+    loaded = true;
     return &conf;
 }
 
