@@ -86,8 +86,6 @@ TrackerConfiguration *loadTrackerConfig() {
                 conf.confidence = stof(segments[1]);
             } else if (segments[0] == "skipFrames") {
                 conf.skipFrames = stoi(segments[1]);
-            } else if (segments[0] == "raspi") {
-                conf.usePiCam = bool(stoi(segments[1]));
             } else if (segments[0] == "imageWidth") {
                 conf.imageWidth = stoi(segments[1]);
             } else if (segments[0] == "imageHeight") {
@@ -123,7 +121,6 @@ void writeTrackerConfig(const TrackerConfiguration &conf) {
     outFile << "config=" << conf.configLocation << std::endl;
     outFile << "confidence=" << conf.confidence << std::endl;
     outFile << "skipFrames=" << conf.skipFrames << std::endl;
-    outFile << "raspi=" << conf.usePiCam << std::endl;
     outFile << "imageWidth=" << conf.imageWidth << std::endl;
     outFile << "imageHeight=" << conf.imageHeight << std::endl;
     outFile << "useOpenCL=" << int(conf.useOpenCL) << std::endl;
@@ -131,6 +128,7 @@ void writeTrackerConfig(const TrackerConfiguration &conf) {
     outFile << "neuralNetQuality=" << conf.neuralNetQuality << std::endl;
     outFile << "maxDisappeared=" << conf.maxDisappeared << std::endl;
     outFile << "searchDistance=" << conf.searchDistance << std::endl;
+    outFile << "# Tracking is only supported on desktop platforms. Not IOT" << std::endl;
     outFile << "useTracking=" << conf.useTracking << std::endl;
     
     outFile << std::endl;

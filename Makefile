@@ -1,21 +1,17 @@
 # Make up to C++17 standard for variant types.
 OBJECTS=main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
-LIBS= -std=c++17 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lraspicam -lraspicam_cv -lpthread -lcurl -I/usr/local/include -L/usr/local/lib 
+LIBS= -std=c++14 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lpthread -lcurl -I/usr/local/include/opencv4
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
-all: release
+all: pc
 
-raspi : LIBS += -DRASPI_ENABLE=1
-raspi : build
+raspi : LIBS += -lraspicam -lraspicam_cv -DRASPI=1
+raspi : $(OBJECTS)
+	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
 
-debug : LIBS += -g
-debug : build
-
-release : LIBS += -O3
-release : build
-
-build : $(OBJECTS)
+pc : LIBS += -lopencv_tracking
+pc : $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
 
 main.o : daemon/daemon.h main.cpp
@@ -31,11 +27,11 @@ centroid_tracker.o : tracking/centroid_tracker.h tracking/centroid_tracker.cpp
 beenet.o : net/beenet.h net/beenet.cpp
 	$(CXX) -c $(LIBS) net/beenet.cpp
 
-install: release
+installPi: raspi
 	sh ./scripts/install.sh
 
 # The install target downloads all the weights and config files needed
-deps: debug
+deps: pc
 	mkdir dnn
 	wget https://pjreddie.com/media/files/yolov3-tiny.weights -O dnn/yolov3.weights
 	wget https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3-tiny.cfg -O dnn/config.cfg
