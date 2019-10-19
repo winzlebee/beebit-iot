@@ -14,3 +14,4 @@ popd
 echo "export CPLUS_INCLUDE_PATH=/opt/opencv-4.1.1-arm/include" | sudo tee -a ~/.bashrc
 echo "export LD_LIBRARY_PATH=/opt/opencv-4.1.1-arm/lib" | sudo tee -a ~/.bashrc
 source ~/.bashrc
+
