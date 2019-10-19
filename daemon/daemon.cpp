@@ -7,6 +7,7 @@
 #include <atomic>
 #include <functional>
 #include <mutex>
+#include <cstring>
 
 #include "../bee_util.h"
 #include "../beebit.h"
@@ -22,10 +23,17 @@ std::mutex mut;
 
 DetectionResult latestResult;
 
-// Buffer results from all libcurl requests
+// Callback for results from CURL requests
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
-   return size * nmemb;
+    // Interpret the response as a state of whether to take a capture the next time we send data
+    char *charBuff = static_cast<char*>(buffer);
+    std::string recievedString(charBuff, nmemb);
+
+    std::cout << "Response: " << nmemb << std::endl;
+
+    // The number of bytes recieved by this transfer
+    return size * nmemb;
 }
 
 Daemon::Daemon()
@@ -68,7 +76,11 @@ void Daemon::networkThread() {
     while (netThread) {
 
         std::stringstream stream;
-        stream << "{ " << "\"uuid\": \"" << uuid << "\", \"people\":" << latestResult.first << ", \"status\":\"Good\" }";
+        stream << "{ " << 
+            "\"uuid\": \"" << uuid << "\", " << 
+            "\"people\":" << latestResult.first << ", " << 
+            "\"timestamp\":" << std::chrono::duration_cast<std::chrono::seconds>(latestResult.second.time_since_epoch()).count() << ", " <<
+            "\"status\":\"Good\" }";
         std::string sendJson = stream.str();
 
         // Perform a CURL update against the network, using the current UUID
