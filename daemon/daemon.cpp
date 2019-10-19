@@ -86,12 +86,16 @@ void Daemon::networkThread() {
         // Send all the IDs and their positions on the screen, normalized
         stream << "\"trackers\": [";
         std::vector<TrackableObject> &people = latestResult.first;
-        for (const TrackableObject &person : people) {
+        for (int i = 0; i < people.size(); i++) {
             stream << "{";
-            stream << "\"id\":" << person.objectId << ", ";
-            stream << "\"x\":" << person.centroids.back().x/((float) (loadTrackerConfig()->imageWidth)) << ",";
-            stream << "\"y\":" << person.centroids.back().y/((float) (loadTrackerConfig()->imageHeight));
+            stream << "\"id\":" << people[i].objectId << ", ";
+            stream << "\"x\":" << people[i].centroids.back().x/((float) (loadTrackerConfig()->imageWidth)) << ",";
+            stream << "\"y\":" << people[i].centroids.back().y/((float) (loadTrackerConfig()->imageHeight));
             stream << "}";
+            
+            if (i < (people.size() - 1)) {
+                stream << ",";
+            }
         }
         stream << "], ";
 
