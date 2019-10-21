@@ -9,18 +9,16 @@ namespace beebit {
 
 static const std::string CONFIG_FILE_NAME = "beebit.cfg";
 
-ConfigMap readConfiguration(const std::string &location) {
-
-    std::ifstream inFile(location.c_str());
+ConfigMap readConfiguration(std::istream &stream, const char delim) {
     ConfigMap readResult;
 
-    if (!inFile) {
+    if (!stream) {
         return readResult;
     }
 
     // Read the lines of the config into the configuration map
     std::string currentLine;
-    while (std::getline(inFile, currentLine)) {
+    while (std::getline(stream, currentLine, delim)) {
         if (currentLine.at(0) == '#') continue;
 
         // For the current line, separate the configuration into a set of keys and values
@@ -30,14 +28,9 @@ ConfigMap readConfiguration(const std::string &location) {
         for (int i = 0; i < 2; i++) {
             std::getline(lineStream, segments[i], '=');
         }
-        
-        std::string lineElement;
-
-        // Check if the string has a decimal point
-        lineElement = segments[1];
 
         // Insert the key and value into a map as a named pair
-        readResult.insert(std::make_pair(segments[0], lineElement));
+        readResult.insert(std::make_pair(segments[0], segments[1]));
     }
 
     return readResult;
@@ -70,44 +63,35 @@ TrackerConfiguration *loadTrackerConfig() {
         return &conf;
     }
 
-    while (!inFile.eof()) {
-        std::string wholeLine;
-        getline(inFile, wholeLine);
+    ConfigMap config = readConfiguration(inFile, '\n');
 
-        if (wholeLine[0] == '#') continue;
-
-        std::stringstream lineStream(wholeLine);
-        std::string segments[2];
-        for (int i = 0; i < 2; i++) {
-            getline(lineStream, segments[i], '=');
-        }
-
+    for (const auto pair : config) {
         try {
             // Load in the configuration information
-            if (segments[0] == "model") {
-                conf.modelLocation = segments[1];
-            } else if (segments[0] == "config") {
-                conf.configLocation = segments[1];
-            } else if (segments[0] == "confidence") {
-                conf.confidence = stof(segments[1]);
-            } else if (segments[0] == "skipFrames") {
-                conf.skipFrames = stoi(segments[1]);
-            } else if (segments[0] == "imageWidth") {
-                conf.imageWidth = stoi(segments[1]);
-            } else if (segments[0] == "imageHeight") {
-                conf.imageHeight = stoi(segments[1]);
-            } else if (segments[0] == "neuralNetQuality") {
-                conf.neuralNetQuality = stoi(segments[1]);
-            } else if (segments[0] == "useOpenCL") {
-                conf.useOpenCL = bool(stoi(segments[1]));
-            } else if (segments[0] == "useCSRT") {
-                conf.useCSRT = bool(stoi(segments[1]));
-            } else if (segments[0] == "maxDisappeared") {
-                conf.maxDisappeared = stoi(segments[1]);
-            } else if (segments[0] == "searchDistance") {
-                conf.searchDistance = stoi(segments[1]);
-            } else if (segments[0] == "useTracking") {
-                conf.useTracking = bool(stoi(segments[1]));
+            if (pair.first == "model") {
+                conf.modelLocation = pair.second;
+            } else if (pair.first == "config") {
+                conf.configLocation = pair.second;
+            } else if (pair.first == "confidence") {
+                conf.confidence = stof(pair.second);
+            } else if (pair.first == "skipFrames") {
+                conf.skipFrames = stoi(pair.second);
+            } else if (pair.first == "imageWidth") {
+                conf.imageWidth = stoi(pair.second);
+            } else if (pair.first == "imageHeight") {
+                conf.imageHeight = stoi(pair.second);
+            } else if (pair.first == "neuralNetQuality") {
+                conf.neuralNetQuality = stoi(pair.second);
+            } else if (pair.first == "useOpenCL") {
+                conf.useOpenCL = bool(stoi(pair.second));
+            } else if (pair.first == "useCSRT") {
+                conf.useCSRT = bool(stoi(pair.second));
+            } else if (pair.first == "maxDisappeared") {
+                conf.maxDisappeared = stoi(pair.second);
+            } else if (pair.first == "searchDistance") {
+                conf.searchDistance = stoi(pair.second);
+            } else if (pair.first == "useTracking") {
+                conf.useTracking = bool(stoi(pair.second));
             }
 
         } catch (std::invalid_argument &exception) {

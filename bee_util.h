@@ -10,10 +10,20 @@ namespace beebit {
 /**
  * @brief Read a generalized configuration file into a map of configurations
  * 
- * @param location 
+ * @param stream The stream to read from
+ * @param delim The character to separate new config values
  * @return ConfigMap 
  */
-ConfigMap readConfiguration(const std::string &location);
+ConfigMap readConfiguration(std::istream &stream, const char delim);
+
+/**
+ * @brief Converts a single-layered JSON file into a configuration map
+ * 
+ * @param json 
+ * @return ConfigMap 
+ */
+ConfigMap readJson(const std::string &json);
+
 void writeConfiguration(std::ostream &out, const ConfigMap &newMap);
 
 // Contains default configuration variables

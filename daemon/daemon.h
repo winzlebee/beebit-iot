@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <chrono>
+#include <exception>
 
 #include "../util/types.h"
 
@@ -12,6 +13,21 @@ class thread;
 }
 
 namespace beebit {
+
+class DaemonException : public std::exception {
+public:
+    explicit DaemonException(const std::string& message) :
+      msg_(message)
+      {}
+
+    virtual ~DaemonException() throw (){}
+
+    virtual const char* what() const throw (){
+       return msg_.c_str();
+    }
+private:
+    std::string msg_;
+};
 
 /**
  * @brief The beebit daemon is responsible for handling the current state of the device and changing any settings as necessary.

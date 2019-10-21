@@ -9,6 +9,7 @@
 #include <mutex>
 #include <cstring>
 #include <algorithm>
+#include <fstream>
 
 #include "../bee_util.h"
 #include "../beebit.h"
@@ -39,8 +40,16 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 
 Daemon::Daemon()
     : m_lifetime(0)
-    , m_config(readConfiguration(configLoc))
 {
+    std::ifstream configFile(configLoc);
+
+    if (!configFile) {
+        throw DaemonException("Config file invalid!");
+        return;
+    }
+
+    m_config = readConfiguration(configFile, '\n');
+    
 }
 
 Daemon::~Daemon() {
