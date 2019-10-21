@@ -50,7 +50,10 @@ public:
      */
     void start();
 
+    void setConfig(const ConfigMap &conf);
+
 private:
+
     void networkThread();
 
     bool onDetection(const DetectionResult result);

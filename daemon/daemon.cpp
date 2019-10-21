@@ -26,13 +26,30 @@ std::mutex mut;
 DetectionResult latestResult;
 
 // Callback for results from CURL requests
-size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
+size_t write_data(void *buffer, size_t size, size_t nmemb, void *thisDaemon)
 {
+    Daemon *daemon = static_cast<Daemon*>(thisDaemon);
+
     // Interpret the response as a state of whether to take a capture the next time we send data
     char *charBuff = static_cast<char*>(buffer);
     std::string recievedString(charBuff, nmemb);
+    if (recievedString.empty()) return size * nmemb;
 
-    std::cout << "Response: " << recievedString << std::endl;
+    std::istringstream configStream(recievedString);
+
+    // Recieve the new configuration values
+    ConfigMap returnedConfig = readConfiguration(configStream, '|');
+
+    std::lock_guard<std::mutex> lk(mut);
+    try {
+        if (static_cast<bool>(stoi(returnedConfig.at("updateConfig")))) {
+            daemon->setConfig(returnedConfig);
+            loadTrackerConfigMap(returnedConfig);
+        }
+    } catch (std::out_of_range &e) {
+        log("Returned config didn't contain expected value.");
+        log(recievedString);
+    }
 
     // The number of bytes recieved by this transfer
     return size * nmemb;
@@ -52,6 +69,10 @@ Daemon::Daemon()
 
 }
 
+void Daemon::setConfig(const ConfigMap &map) {
+    m_config = map;
+}
+
 Daemon::~Daemon() {
 }
 
@@ -63,6 +84,7 @@ bool Daemon::onDetection(const DetectionResult result) {
     
     return netThread;
 }
+
 
 void Daemon::networkThread() {
 
@@ -118,6 +140,7 @@ void Daemon::networkThread() {
             curl_easy_setopt(curl, CURLOPT_URL, (endpoint + "/bee/update").c_str());
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, sendJson.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
             response = curl_easy_perform(curl);
 

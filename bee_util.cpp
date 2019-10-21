@@ -19,6 +19,7 @@ ConfigMap readConfiguration(std::istream &stream, const char delim) {
     // Read the lines of the config into the configuration map
     std::string currentLine;
     while (std::getline(stream, currentLine, delim)) {
+        if (currentLine.empty()) continue;
         if (currentLine.at(0) == '#') continue;
 
         // For the current line, separate the configuration into a set of keys and values
