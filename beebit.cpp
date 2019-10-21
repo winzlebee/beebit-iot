@@ -1,6 +1,13 @@
+
+#ifdef RASPI
 #include <raspicam/raspicam_cv.h>
+#endif
 
 #include <opencv2/core/ocl.hpp>
+
+#ifndef RASPI
+#include <opencv2/tracking.hpp>
+#endif
 
 #include "beebit.h"
 #include "bee_util.h"
@@ -56,10 +63,16 @@ public:
         cv::ocl::setUseOpenCL(m_config->useOpenCL);
 
         log("Opening Camera");
-        m_capture.open();
+        m_capture.open(
+            #ifndef RASPI
+            0
+            #endif
+        );
 
-	//m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_imgSize.width);
-	//m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_imgSize.height);
+        #ifndef RASPI
+        m_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_imgSize.width);
+        m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_imgSize.height);
+        #endif
 
         // Initialize the BeeBit tracker
         log("Initializing tracker");
@@ -71,6 +84,38 @@ public:
     }
 
     void getBoxes(const cv::Mat &frame, std::vector<cv::Rect> &detections) {
+
+#ifndef RASPI
+        if (m_config->useTracking) {
+            // Only perform the expensive neural net detections every skipFrames
+            if (m_totalFrames % m_config->skipFrames == 0) {
+                m_trackers.clear();
+
+                std::vector<cv::Rect> detect = m_network->getDetections(frame, m_imgSize);
+
+                for (const auto &rect : detect) {
+
+                    // Generate a tracker and add it to the list of trackers
+                    if (m_config->useCSRT) {
+                        m_trackers.push_back(cv::TrackerCSRT::create());
+                    } else {
+                        m_trackers.push_back(cv::TrackerKCF::create());
+                    }
+                    m_trackers.back()->init(frame, rect);
+                }   
+
+            } else {
+                for (const auto &tracker : m_trackers) {
+                    cv::Rect2d trackerRect;
+                    tracker->update(frame, trackerRect);
+                    detections.push_back(trackerRect);
+                }
+            }
+            return;
+        }
+#endif
+
+        // We'll just use the neural network for every detection
         detections = m_network->getDetections(frame, m_imgSize);
     }
 
@@ -79,7 +124,9 @@ public:
         m_capture.grab();
         m_capture.retrieve(frame);
 
-	cv::resize(frame, frame, m_imgSize);
+#ifdef RASPI
+	    cv::resize(frame, frame, m_imgSize);
+#endif
 
         std::vector<cv::Rect> trackedRects;
 
@@ -248,7 +295,16 @@ private:
     const TrackerConfiguration *m_config;
     cv::Size m_imgSize;
 
+    #ifdef RASPI
     raspicam::RaspiCam_Cv m_capture;
+    #else
+    cv::VideoCapture m_capture;
+    #endif
+
+    #ifndef RASPI
+    // The trackers that track individual people in the frame
+    std::vector<cv::Ptr<cv::Tracker> > m_trackers;
+    #endif
 
     // Network and tracking
     std::unique_ptr<BeeNet> m_network;

@@ -12,13 +12,40 @@ Building on *Linux* is relatively straightforward. The below instructions are de
 sudo apt remove libopencv*
 ```
 
+1. Run the unified install script to install all dependencies
+```bash
+chmod +x ./scripts/install_opencv.sh
+sudo ./scripts/install_opencv.sh
+```
+2. Run the following command in the root directory to install resources and run the project.
+```bash
+make deps && ./beetrack
+```
+
+#### Uninstallation
+If you'd like to uninstall the dependencies and tracker at any time, simply run;
+```bash
+make clean
+./scripts/install_opencv.sh uninstall
+```
+
+### Raspberry Pi
+Support for *raspbian* or any armhf debian distribution is provided by a unified install script.
+
+**NOTE:** This process installs all the dependencies and sets up the tracker to run on boot of the device. It will use a lot of CPU. The beebit service can be disabled with `systemctl beebit stop`
+
+```bash
+chmod +x ./scripts/install_raspi.sh
+sudo ./scripts/install_raspi.sh
+```
+
+### Manual installation of OpenCV libraries
+
+If for some reason the install script doesn't work, the below instructions should assist the debugging process.
+
 1. Install all the required dependencies.
 ```bash
-sudo apt install libcurl4-openssl-dev build-essential
-```
-Optionally, also install libgtkmm if you would like UI support.
-```bash
-sudo apt install libgtkmm-3.0-dev
+sudo apt install libcurl4-openssl-dev build-essential libgtk2.0-dev
 ```
 2. Download opencv **4.1.1** (the lastest version as of the time of writing) from [here](https://github.com/opencv/opencv/archive/4.1.1.zip)
 3. Download the opencv contrib repository [here](https://github.com/opencv/opencv_contrib/archive/4.1.1.zip)
@@ -41,9 +68,4 @@ sudo make install
 cd /etc/ld.so.conf.d/
 sudo echo /usr/local/lib/ >> x86_64-linux-gnu.conf
 sudo ldconfig
-```
-
-6. Go back to where you have cloned this repository. Use the following command to compile and run the project, downloading the models that are necessary;
-```bash
-make deps && ./beetrack
 ```
