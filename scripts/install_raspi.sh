@@ -25,9 +25,11 @@ source ~/.bashrc
 
 # Install RaspiCam so that the pi camera can be used on the device
 git clone https://github.com/cedricve/raspicam .
-cd raspicam && mkdir build && cd build
+mkdir raspicam/build
+pushd raspicam/build
 cmake ../
 make && sudo make install
+popd
 
 sudo ldconfig
 

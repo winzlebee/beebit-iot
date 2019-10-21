@@ -30,6 +30,9 @@ beenet.o : net/beenet.h net/beenet.cpp
 install: raspi
 	sh ./scripts/install_raspi.sh
 
+uninstall: raspi
+	sh ./scripts/uninstall_raspi.sh
+
 # The install target downloads all the weights and config files needed
 deps: pc
 	mkdir dnn
