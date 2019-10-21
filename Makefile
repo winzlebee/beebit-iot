@@ -6,6 +6,7 @@ OUTPUT=beetrack
 
 all: pc
 
+raspi : depsPi
 raspi : LIBS += -lraspicam -lraspicam_cv -DRASPI=1
 raspi : $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
@@ -33,7 +34,7 @@ install: raspi
 uninstall: raspi
 	bash ./scripts/uninstall_raspi.sh
 
-depsPi: raspi
+depsPi:
 	bash ./scripts/install_pi_dependencies.sh
 	mkdir dnn
 	wget https://pjreddie.com/media/files/yolov3-tiny.weights -O dnn/yolov3.weights
