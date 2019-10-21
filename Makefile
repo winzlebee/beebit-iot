@@ -1,6 +1,6 @@
 # Make up to C++17 standard for variant types.
 OBJECTS=main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
-LIBS= -std=c++14 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lpthread -lcurl
+LIBS= -std=c++14 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lpthread -lcurl -I/usr/local/include
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
@@ -30,7 +30,7 @@ beenet.o : net/beenet.h net/beenet.cpp
 install: raspi
 	bash ./scripts/install_raspi.sh
 
-uninstall: raspi
+uninstall:
 	bash ./scripts/uninstall_raspi.sh
 
 depsPi:

@@ -2,6 +2,10 @@
 
 shopt -s extglob
 
+if [ `opencv_version` == "4.1.1" ]; then
+    exit 0
+fi
+
 if [ "$1" == "uninstall" ]; then
     pushd opencv_install/opencv-4.1.1/build
     sudo make uninstall

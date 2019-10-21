@@ -13,7 +13,7 @@ WORKING_DIRECTORY=`pwd`
 git clone git@github.com:winzlebee/opencv-4.1.1-armhf.git
 pushd opencv-4.1.1-armhf
 tar -xvf opencv-4.1.1-armhf.tar.bz2
-sudo cp opencv-4.1.1-arm /opt
+sudo cp -r opencv-4.1.1-arm /opt
 popd
 
 echo "export CPLUS_INCLUDE_PATH=/usr/local/include:/opt/opencv-4.1.1-arm/include/opencv4:$CPLUS_INCLUDE_PATH" | sudo tee -a ~/.bashrc
@@ -24,7 +24,7 @@ source ~/.bashrc
 git clone https://github.com/cedricve/raspicam
 mkdir raspicam/build
 pushd raspicam/build
-cmake ../
+cmake -DCMAKE_PREFIX_PATH=/opt/opencv-4.1.1-arm/ ../
 make && sudo make install
 popd
 

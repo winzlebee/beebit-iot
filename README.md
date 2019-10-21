@@ -34,6 +34,12 @@ sudo make depsPi
 sudo make install
 ```
 
+#### Uninstallation
+The pi installation can be reversed with
+```bash
+sudo make uninstall
+```
+
 ### Manual installation of OpenCV libraries
 
 If for some reason the install script doesn't work, the below instructions should assist the debugging process.
