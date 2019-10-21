@@ -1,17 +1,16 @@
 # Make up to C++17 standard for variant types.
 OBJECTS=main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
-LIBS= -std=c++14 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lpthread -lcurl -I/usr/local/include/opencv4
+LIBS= -std=c++14 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lpthread -lcurl
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
 all: pc
 
-raspi : depsPi
-raspi : LIBS += -lraspicam -lraspicam_cv -DRASPI=1
+raspi : LIBS += -lraspicam -lraspicam_cv -DRASPI=1 -I/opt/opencv-4.1.1-arm/include/opencv4
 raspi : $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
 
-pc : LIBS += -lopencv_tracking
+pc : LIBS += -lopencv_tracking -I/usr/local/include/opencv4
 pc : $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
 

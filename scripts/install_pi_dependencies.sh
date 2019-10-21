@@ -16,7 +16,7 @@ tar -xvf opencv-4.1.1-armhf.tar.bz2
 sudo cp opencv-4.1.1-arm /opt
 popd
 
-echo "export CPLUS_INCLUDE_PATH=/usr/local/include:/opt/opencv-4.1.1-arm/include:$CPLUS_INCLUDE_PATH" | sudo tee -a ~/.bashrc
+echo "export CPLUS_INCLUDE_PATH=/usr/local/include:/opt/opencv-4.1.1-arm/include/opencv4:$CPLUS_INCLUDE_PATH" | sudo tee -a ~/.bashrc
 echo "export LD_LIBRARY_PATH=/opt/opencv-4.1.1-arm/lib" | sudo tee -a ~/.bashrc
 source ~/.bashrc
 
