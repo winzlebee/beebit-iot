@@ -12,14 +12,9 @@ Building on *Linux* is relatively straightforward. The below instructions are de
 sudo apt remove libopencv*
 ```
 
-1. Run the unified install script to install all dependencies
+1. Run the unified install script to install all dependencies and run the program
 ```bash
-chmod +x ./scripts/install_opencv.sh
-sudo ./scripts/install_opencv.sh
-```
-2. Run the following command in the root directory to install resources and run the project.
-```bash
-make deps && ./beetrack
+sudo make deps && ./beetrack
 ```
 
 #### Uninstallation
@@ -35,7 +30,7 @@ Support for *raspbian* or any armhf debian distribution is provided by a unified
 **NOTE:** This process installs all the dependencies and sets up the tracker to run on boot of the device. It will use a lot of CPU. The beebit service can be disabled with `systemctl stop beebit`
 
 ```bash
-make deps
+sudo make depsPi
 sudo make install
 ```
 
