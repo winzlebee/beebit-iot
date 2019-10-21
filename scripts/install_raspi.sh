@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Install all dependencies required by OpenCV
+sudo apt install libcurl4-openssl-dev build-essential libgtk2.0-dev
+sudo apt install libgtk-3-dev libcanberra-gtk3-dev
+sudo apt install libtiff-dev zlib1g-dev
+sudo apt install libjpeg-dev libpng-dev
+sudo apt install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt install libxvidcore-dev libx264-dev
+
 mkdir raspi_install && cd raspi_install
 WORKING_DIRECTORY=`pwd`
 
@@ -14,6 +22,14 @@ popd
 echo "export CPLUS_INCLUDE_PATH=/opt/opencv-4.1.1-arm/include" | sudo tee -a ~/.bashrc
 echo "export LD_LIBRARY_PATH=/opt/opencv-4.1.1-arm/lib" | sudo tee -a ~/.bashrc
 source ~/.bashrc
+
+# Install RaspiCam so that the pi camera can be used on the device
+git clone https://github.com/cedricve/raspicam .
+cd raspicam && mkdir build && cd build
+cmake ../
+make && sudo make install
+
+sudo ldconfig
 
 # Install the beebit service onto the system
 sudo mkdir /opt/beebit

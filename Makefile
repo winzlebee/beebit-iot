@@ -27,8 +27,8 @@ centroid_tracker.o : tracking/centroid_tracker.h tracking/centroid_tracker.cpp
 beenet.o : net/beenet.h net/beenet.cpp
 	$(CXX) -c $(LIBS) net/beenet.cpp
 
-installPi: raspi
-	sh ./scripts/install.sh
+install: raspi
+	sh ./scripts/install_raspi.sh
 
 # The install target downloads all the weights and config files needed
 deps: pc

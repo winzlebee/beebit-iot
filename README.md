@@ -32,11 +32,11 @@ make clean
 ### Raspberry Pi
 Support for *raspbian* or any armhf debian distribution is provided by a unified install script.
 
-**NOTE:** This process installs all the dependencies and sets up the tracker to run on boot of the device. It will use a lot of CPU. The beebit service can be disabled with `systemctl beebit stop`
+**NOTE:** This process installs all the dependencies and sets up the tracker to run on boot of the device. It will use a lot of CPU. The beebit service can be disabled with `systemctl stop beebit`
 
 ```bash
-chmod +x ./scripts/install_raspi.sh
-sudo ./scripts/install_raspi.sh
+make deps
+sudo make install
 ```
 
 ### Manual installation of OpenCV libraries

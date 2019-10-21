@@ -10,7 +10,12 @@ if [ "$1" == "uninstall" ]; then
     exit 0
 fi
 
-sudo apt install libgtk2.0-dev
+sudo apt install libcurl4-openssl-dev build-essential libgtk2.0-dev
+sudo apt install libgtk-3-dev libcanberra-gtk3-dev
+sudo apt install libtiff-dev zlib1g-dev
+sudo apt install libjpeg-dev libpng-dev
+sudo apt install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt install libxvidcore-dev libx264-dev
 
 # Download OpenCV and the relevant libraries
 mkdir opencv_install && cd opencv_install
