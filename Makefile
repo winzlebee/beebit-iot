@@ -6,7 +6,7 @@ OUTPUT=beetrack
 
 all: pc
 
-raspi : LIBS += -lraspicam -lraspicam_cv -DRASPI=1 -I/opt/opencv-4.1.1-arm/include/opencv4
+raspi : LIBS += -lraspicam -lraspicam_cv -DRASPI=1 -I/opt/opencv-4.1.1-arm/include/opencv4 -L/opt/opencv-4.1.1-arm/lib
 raspi : $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LIBS) -o $(OUTPUT)
 

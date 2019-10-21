@@ -20,6 +20,8 @@ echo "export CPLUS_INCLUDE_PATH=/usr/local/include:/opt/opencv-4.1.1-arm/include
 echo "export LD_LIBRARY_PATH=/opt/opencv-4.1.1-arm/lib" | sudo tee -a ~/.bashrc
 source ~/.bashrc
 
+echo "/opt/opencv-4.1.1-arm/lib" | sudo tee -a /etc/ld.so.conf.d/opencv.conf
+
 # Install RaspiCam so that the pi camera can be used on the device
 git clone https://github.com/cedricve/raspicam
 mkdir raspicam/build

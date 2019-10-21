@@ -8,7 +8,7 @@ sudo mkdir /opt/beebit
 
 sudo cp -r beetrack *.cfg dnn/ /opt/beebit
 sudo cp scripts/beebit.service /etc/systemd/system/
-systemctl enable beebit
+sudo systemctl enable beebit
 
 echo "BeeBit Service has been installed."
 echo "Please test using the command '/opt/beebit/beetrack'"
