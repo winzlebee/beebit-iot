@@ -15,3 +15,8 @@ echo "export CPLUS_INCLUDE_PATH=/opt/opencv-4.1.1-arm/include" | sudo tee -a ~/.
 echo "export LD_LIBRARY_PATH=/opt/opencv-4.1.1-arm/lib" | sudo tee -a ~/.bashrc
 source ~/.bashrc
 
+# Install the beebit service onto the system
+sudo mkdir /opt/beebit
+sudo cp -r beetrack *.cfg dnn/ /opt/beebit
+sudo cp scripts/beebit.service /etc/systemd/system/
+systemctl enable beebit
