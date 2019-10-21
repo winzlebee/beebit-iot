@@ -25,7 +25,7 @@ make clean
 ```
 
 ### Raspberry Pi
-Support for *raspbian* or any armhf debian distribution is provided by a unified install script.
+Support for *raspbian*, specifically *raspbian stretch* is provided by a unified install script. The requirement of one version of the distribution is due to our use of source-controlled pre-compiled OpenCV binaries. This limitation would subside if compilation time on the raspberry pi of OpenCV was feasable.
 
 **NOTE:** This process installs all the dependencies and sets up the tracker to run on boot of the device. It will use a lot of CPU. The beebit service can be disabled with `systemctl stop beebit`
 

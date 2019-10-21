@@ -12,8 +12,8 @@ WORKING_DIRECTORY=`pwd`
 # Install a precompiled version of OpenCV for the raspberry pi
 git clone git@github.com:winzlebee/opencv-4.1.1-armhf.git
 pushd opencv-4.1.1-armhf
-tar -xvf opencv-4.1.1-armhf.tar.bz2
-sudo cp -r opencv-4.1.1-arm /opt
+tar -xvf opencv-4.1.1.tar.bz2
+sudo cp -r opencv-4.1.1-nofpv /opt/opencv-4.1.1-arm
 popd
 
 echo "export CPLUS_INCLUDE_PATH=/usr/local/include:/opt/opencv-4.1.1-arm/include/opencv4:$CPLUS_INCLUDE_PATH" | sudo tee -a ~/.bashrc
