@@ -43,12 +43,12 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *thisDaemon)
     std::lock_guard<std::mutex> lk(mut);
     try {
         if (static_cast<bool>(stoi(returnedConfig.at("updateConfig")))) {
-            daemon->setConfig(returnedConfig);
             loadTrackerConfigMap(returnedConfig);
+            daemon->setConfig(returnedConfig);
+            log("Config Updated");
         }
     } catch (std::out_of_range &e) {
         log("Returned config didn't contain expected value.");
-        log(recievedString);
     }
 
     // The number of bytes recieved by this transfer
@@ -71,6 +71,7 @@ Daemon::Daemon()
 
 void Daemon::setConfig(const ConfigMap &map) {
     m_config = map;
+    m_configChanged = true;
 }
 
 Daemon::~Daemon() {
@@ -82,7 +83,7 @@ bool Daemon::onDetection(const DetectionResult result) {
     // TODO: Log results to a local database and cache them for when the network fails?
     latestResult = result;
     
-    return netThread;
+    return netThread && !m_configChanged;
 }
 
 
@@ -94,7 +95,6 @@ void Daemon::networkThread() {
     std::string endpoint;
 
     try {
-        delayTime = std::chrono::seconds(std::stoi(m_config.at("frequency")));
         uuid = (m_config.at("uuid"));
         endpoint = (m_config.at("endpoint"));
     } catch (std::invalid_argument &ex) {
@@ -152,7 +152,7 @@ void Daemon::networkThread() {
         }
 
         log("Network Message sent.");
-        std::this_thread::sleep_for(delayTime);
+        std::this_thread::sleep_for(std::chrono::seconds(std::stoi(m_config.at("frequency"))));
     }
     
 }
@@ -171,12 +171,25 @@ void Daemon::start() {
     auto detectFunc = std::bind(&Daemon::onDetection, this, std::placeholders::_1);
 
     loadTrackerConfigFile();
-    beebit::PeopleCounter peopleCounter(cameraIndex, detectFunc);
-    peopleCounter.setDebugWindow(true);
+    m_peopleCounter = std::make_unique<beebit::PeopleCounter>(cameraIndex, detectFunc);
+    m_peopleCounter->setDebugWindow(true);
     //peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	
     m_networkThread = std::make_unique<std::thread>(&Daemon::networkThread, this);
-	peopleCounter.begin();
+
+    while (netThread) {
+        // Keep re-starting detection while the network thread is active.
+        // The only other reason the detection process would re-start is due to a config change.
+	    m_peopleCounter->begin();
+        
+        // If something else caused the termination, then break.
+        if (!m_configChanged && netThread) {
+            break;
+        }
+
+        m_configChanged = false;
+    }
+
     writeTrackerConfigFile();
 
     // We've exited the main thread, so terminate the network thread

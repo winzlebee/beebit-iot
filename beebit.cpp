@@ -54,8 +54,15 @@ class PeopleCounterImpl {
 public:
     PeopleCounterImpl(int cameraIndex, const TrackerConfiguration *config, DetectionCallback cb)
         : m_config(config)
-        , m_imgSize(cv::Size(m_config->imageWidth, m_config->imageHeight))
         , m_callback(cb) {
+
+        totalUp = 0;
+        totalDown = 0;
+        m_totalFrames = 0;
+    }
+
+    void reloadConfig() {
+        m_imgSize = cv::Size(m_config->imageWidth, m_config->imageHeight);
 
         log("Loading Model");
 
@@ -78,9 +85,6 @@ public:
         log("Initializing tracker");
         m_tracker = std::make_unique<CentroidTracker>(m_config->maxDisappeared, m_config->searchDistance);
 
-        totalUp = 0;
-        totalDown = 0;
-        m_totalFrames = 0;
     }
 
     void getBoxes(const cv::Mat &frame, std::vector<cv::Rect> &detections) {
@@ -208,6 +212,9 @@ public:
 
 
     void begin() {
+        // Load the neural network, and all the things we need
+        reloadConfig();
+
         // Start the tracking process
         cv::Mat frame;
 

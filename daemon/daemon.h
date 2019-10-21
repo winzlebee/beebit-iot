@@ -14,6 +14,8 @@ class thread;
 
 namespace beebit {
 
+class PeopleCounter;
+
 class DaemonException : public std::exception {
 public:
     explicit DaemonException(const std::string& message) :
@@ -60,9 +62,13 @@ private:
 
     ConfigMap m_config;
     uint32_t m_lifetime;
+    bool m_configChanged = false;
 
     // The thread where we send data collected from the counter
     std::unique_ptr<std::thread> m_networkThread;
+
+    // The actual people counter we use
+    std::unique_ptr<PeopleCounter> m_peopleCounter;
 
 };
 
