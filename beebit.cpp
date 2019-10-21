@@ -335,7 +335,7 @@ private:
 
 };
 
-PeopleCounter::PeopleCounter(int cameraIndex, DetectionCallback cb) : m_config(loadTrackerConfig()), m_cameraIndex(cameraIndex) {
+PeopleCounter::PeopleCounter(int cameraIndex, DetectionCallback cb) : m_config(TrackerConfiguration::instance()), m_cameraIndex(cameraIndex) {
     m_impl = std::make_unique<PeopleCounterImpl>(m_cameraIndex, m_config, cb);
 }
 

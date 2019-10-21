@@ -42,28 +42,11 @@ void writeConfiguration(std::ostream &out, const ConfigMap &newMap) {
     for (const auto &pair : newMap) {
         out << pair.first << '=' << pair.second << std::endl;
     }
-
 }
 
-TrackerConfiguration *loadTrackerConfig() {
-    static TrackerConfiguration conf;
-    static bool loaded = false;
+void loadTrackerConfigMap(const ConfigMap &config) {
 
-    if (loaded) {
-        return &conf;
-    }
-
-    std::ifstream inFile;
-    inFile.open(CONFIG_FILE_NAME);
-
-    if (!inFile) {
-        log("Config file not found. Creating...");
-        writeTrackerConfig(conf);
-        loaded = true;
-        return &conf;
-    }
-
-    ConfigMap config = readConfiguration(inFile, '\n');
+    TrackerConfiguration &conf = *TrackerConfiguration::instance();
 
     for (const auto pair : config) {
         try {
@@ -99,13 +82,28 @@ TrackerConfiguration *loadTrackerConfig() {
             continue;
         }
     }
-
-    loaded = true;
-    return &conf;
 }
 
-void writeTrackerConfig(const TrackerConfiguration &conf) {
+void loadTrackerConfigFile() {
+    std::ifstream inFile;
+    inFile.open(CONFIG_FILE_NAME);
+
+    if (!inFile) {
+        log("Config file not found. Creating...");
+        writeTrackerConfigFile();
+        return;
+    }
+
+    ConfigMap config = readConfiguration(inFile, '\n');
+
+    loadTrackerConfigMap(config);
+
+}
+
+void writeTrackerConfigFile() {
     std::ofstream outFile(CONFIG_FILE_NAME);
+
+    TrackerConfiguration &conf = *TrackerConfiguration::instance();
 
     outFile << "# BeeBit Configuration" << std::endl;
     outFile << "model=" << conf.modelLocation << std::endl;

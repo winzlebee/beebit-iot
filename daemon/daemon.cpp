@@ -49,7 +49,7 @@ Daemon::Daemon()
     }
 
     m_config = readConfiguration(configFile, '\n');
-    
+
 }
 
 Daemon::~Daemon() {
@@ -98,8 +98,8 @@ void Daemon::networkThread() {
         for (int i = 0; i < people.size(); i++) {
             stream << "{";
             stream << "\"id\":" << people[i].objectId << ", ";
-            stream << "\"x\":" << people[i].centroids.back().x/((float) (loadTrackerConfig()->imageWidth)) << ",";
-            stream << "\"y\":" << people[i].centroids.back().y/((float) (loadTrackerConfig()->imageHeight));
+            stream << "\"x\":" << people[i].centroids.back().x/((float) (TrackerConfiguration::instance()->imageWidth)) << ",";
+            stream << "\"y\":" << people[i].centroids.back().y/((float) (TrackerConfiguration::instance()->imageHeight));
             stream << "}";
             
             if (i < (people.size() - 1)) {
@@ -147,12 +147,14 @@ void Daemon::start() {
 
     auto detectFunc = std::bind(&Daemon::onDetection, this, std::placeholders::_1);
 
+    loadTrackerConfigFile();
     beebit::PeopleCounter peopleCounter(cameraIndex, detectFunc);
     peopleCounter.setDebugWindow(true);
     //peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	
     m_networkThread = std::make_unique<std::thread>(&Daemon::networkThread, this);
 	peopleCounter.begin();
+    writeTrackerConfigFile();
 
     // We've exited the main thread, so terminate the network thread
     netThread = false;

@@ -28,6 +28,12 @@ void writeConfiguration(std::ostream &out, const ConfigMap &newMap);
 
 // Contains default configuration variables
 struct TrackerConfiguration {
+
+    static TrackerConfiguration *instance() {
+        static TrackerConfiguration m_instance;
+        return &m_instance;
+    }
+
     // Location of the trained model
     std::string modelLocation = "dnn/yolov3.weights";
     // Location of the config for the neural network
@@ -54,10 +60,18 @@ struct TrackerConfiguration {
     int lineCrossDistance = 20;
     // Whether to attempt to track people using a CSRT tracker between frames
     bool useTracking = false;
+
+private:
+  TrackerConfiguration()= default;
+  ~TrackerConfiguration()= default;
+  TrackerConfiguration(const TrackerConfiguration&)= delete;
+  TrackerConfiguration& operator=(const TrackerConfiguration&)= delete;
+
 };
 
-TrackerConfiguration *loadTrackerConfig();
-void writeTrackerConfig(const TrackerConfiguration &conf);
+void loadTrackerConfigMap(const ConfigMap &config);
+void loadTrackerConfigFile();
+void writeTrackerConfigFile();
 
 template<typename T>
 void log(const T &text) {
