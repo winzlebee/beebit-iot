@@ -112,11 +112,15 @@ public:
                 }
             }
             return;
-        }
+        } else {
 #endif
 
         // We'll just use the neural network for every detection
         detections = m_network->getDetections(frame, m_imgSize);
+
+#ifndef RASPI
+        }
+#endif
     }
 
     void loop(cv::Mat &frame, double delta) {
