@@ -1,6 +1,6 @@
 # Make up to C++17 standard for variant types.
-OBJECTS=main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
-LIBS= -std=c++14 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lpthread -lcurl -I/usr/local/include
+OBJECTS=base64.o main.o beebit.o bee_util.o centroid_tracker.o beenet.o daemon.o
+LIBS= -std=c++14 -lopencv_core -lopencv_videoio -lopencv_dnn -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lpthread -lcurl -I/usr/local/include
 DEPENDENCIES=yolov3.weights config.cfg
 OUTPUT=beetrack
 
@@ -16,7 +16,7 @@ pc : $(OBJECTS)
 
 main.o : daemon/daemon.h main.cpp
 	$(CXX) -c $(LIBS) main.cpp 
-daemon.o : daemon/daemon.h daemon/daemon.cpp util/types.h
+daemon.o : daemon/daemon.h daemon/daemon.cpp util/types.h util/base64.h
 	$(CXX) -c $(LIBS) daemon/daemon.cpp
 beebit.o : beebit.h bee_util.h net/beenet.h tracking/centroid_tracker.h tracking/trackable_object.h beebit.cpp util/types.h
 	$(CXX) -c $(LIBS) beebit.cpp
@@ -26,6 +26,8 @@ centroid_tracker.o : tracking/centroid_tracker.h tracking/centroid_tracker.cpp
 	$(CXX) -c $(LIBS) tracking/centroid_tracker.cpp
 beenet.o : net/beenet.h net/beenet.cpp
 	$(CXX) -c $(LIBS) net/beenet.cpp
+base64.o : util/base64.h
+	$(CXX) -c util/base64.cpp
 
 install: raspi
 	bash ./scripts/install_raspi.sh

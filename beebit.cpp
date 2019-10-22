@@ -234,7 +234,7 @@ public:
             auto end = std::chrono::high_resolution_clock::now();
             deltaTime = end-start;
 
-            if (!m_callback({m_objects, end})) break;
+            if (!m_callback({m_objects, end, frame})) break;
 
             char key = cv::waitKey(5) & 0xFF;
             if (key == 'q') break;

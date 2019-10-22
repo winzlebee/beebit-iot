@@ -14,12 +14,14 @@
 #include "../bee_util.h"
 #include "../beebit.h"
 #include "../util/types.h"
+#include "../util/base64.h"
 
 namespace beebit {
 
 const std::string configLoc = "beemon.cfg";
 
 std::atomic<bool> netThread(true);
+std::atomic<bool> sendFrame(false);
 
 std::mutex mut;
 
@@ -46,6 +48,10 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *thisDaemon)
             loadTrackerConfigMap(returnedConfig);
             daemon->setConfig(returnedConfig);
             log("Config Updated");
+        }
+
+        if (static_cast<bool>(stoi(returnedConfig.at("sendFrame")))) {
+            sendFrame = true;
         }
     } catch (std::out_of_range &e) {
         log("Returned config didn't contain expected value.");
@@ -97,7 +103,7 @@ void Daemon::networkThread() {
     try {
         uuid = (m_config.at("uuid"));
         endpoint = (m_config.at("endpoint"));
-    } catch (std::invalid_argument &ex) {
+    } catch (std::out_of_range &ex) {
         log("Invalid value in config! Stopping network...");
         netThread = false;
     }
@@ -111,12 +117,12 @@ void Daemon::networkThread() {
         std::stringstream stream;
         stream << "{ " << 
             "\"uuid\": \"" << uuid << "\", " << 
-            "\"people\":" << latestResult.first.size() << ", " << 
-            "\"timestamp\":" << std::chrono::duration_cast<std::chrono::seconds>(latestResult.second.time_since_epoch()).count() << ", ";
+            "\"people\":" << std::get<0>(latestResult).size() << ", " << 
+            "\"timestamp\":" << std::chrono::duration_cast<std::chrono::seconds>(std::get<1>(latestResult).time_since_epoch()).count() << ", ";
 
         // Send all the IDs and their positions on the screen, normalized
         stream << "\"trackers\": [";
-        std::vector<TrackableObject> &people = latestResult.first;
+        std::vector<TrackableObject> &people = std::get<0>(latestResult);
         for (int i = 0; i < people.size(); i++) {
             stream << "{";
             stream << "\"id\":" << people[i].objectId << ", ";
@@ -129,6 +135,22 @@ void Daemon::networkThread() {
             }
         }
         stream << "], ";
+
+        // If we have scheduled an image send, then encode the latest image capture and send it to the server
+        if (sendFrame && !std::get<2>(latestResult).empty()) {
+            cv::Mat resultCopy;
+            std::get<2>(latestResult).copyTo(resultCopy);
+
+            std::vector<int> compressionParams;
+            compressionParams.push_back(cv::IMWRITE_JPEG_QUALITY);
+            compressionParams.push_back(std::stoi(m_config.at("image_quality")));
+
+            std::vector<uchar> frameBuffer;
+            if (cv::imencode(".jpg", resultCopy, frameBuffer, compressionParams)) {
+                log("Sent encoded image to server.");
+                stream << "\"frame\": \"" << base64_encode(&frameBuffer[0], frameBuffer.size()) << "\", ";
+            }
+        }
 
         stream << "\"status\":\"Good\" }";
         std::string sendJson = stream.str();
