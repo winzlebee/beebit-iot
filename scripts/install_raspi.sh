@@ -1,14 +1,23 @@
 #!/bin/bash
 
-# Install the beebit service onto the system
-sudo mkdir /opt/beebit
+BEARER_KEY="2%qH3n\$d2z^SS-aV"
+ENDPOINT="http://localhost:3420/bee/manufacture"
 
 # Use the web api to get a new registration UUID for this device. Remember to send auth token with the request
+DEVICE_UUID=`curl -s -H "Authorization: Bearer $BEARER_KEY" -X POST $ENDPOINT`
 
+if [ ${#DEVICE_UUID} -eq 32 ]; then
+    echo "uuid=$DEVICE_UUID" >> beemon.cfg
 
-sudo cp -r beetrack *.cfg dnn/ /opt/beebit
-sudo cp scripts/beebit.service /etc/systemd/system/
-sudo systemctl enable beebit
+    # Install the beebit service onto the system
+    sudo mkdir /opt/beebit
 
-echo "BeeBit Service has been installed."
-echo "Please test using the command '/opt/beebit/beetrack'"
+    sudo cp -r beetrack *.cfg dnn/ /opt/beebit
+    sudo cp scripts/beebit.service /etc/systemd/system/
+    sudo systemctl enable beebit
+
+    echo "BeeBit Service has been installed. This device UUID is $DEVICE_UUID"
+    echo "Please test using the command '/opt/beebit/beetrack'"
+else
+    echo "Malformed response from server. Please check you have access to the internet."
+fi
