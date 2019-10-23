@@ -50,9 +50,7 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *thisDaemon)
             log("Config Updated");
         }
 
-        if (static_cast<bool>(stoi(returnedConfig.at("sendFrame")))) {
-            sendFrame = true;
-        }
+        sendFrame = static_cast<bool>(stoi(returnedConfig.at("sendFrame")));
     } catch (std::out_of_range &e) {
         log("Returned config didn't contain expected value.");
     }
