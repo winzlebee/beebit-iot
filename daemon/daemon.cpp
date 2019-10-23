@@ -50,7 +50,9 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *thisDaemon)
             log("Config Updated");
         }
 
-        sendFrame = static_cast<bool>(stoi(returnedConfig.at("sendFrame")));
+        if (static_cast<bool>(stoi(returnedConfig.at("sendFrame")))) {
+            sendFrame = true;
+        }
     } catch (std::out_of_range &e) {
         log("Returned config didn't contain expected value.");
     }
@@ -148,6 +150,7 @@ void Daemon::networkThread() {
                 log("Sent encoded image to server.");
                 stream << "\"frame\": \"" << base64_encode(&frameBuffer[0], frameBuffer.size()) << "\", ";
             }
+            sendFrame = false;
         }
 
         stream << "\"status\":\"Good\" }";
