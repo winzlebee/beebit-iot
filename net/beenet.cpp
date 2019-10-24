@@ -14,6 +14,7 @@ std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vecto
     static std::string outLayerType = m_network->getLayer(outLayers[0])->type;
 
     std::vector<cv::Rect> boxes;
+    std::vector<float> confidences;
     if (outLayerType == "Region") {
         // Network produces an output blob, we can process for detections
         for (size_t i = 0; i < blob.size(); i++) {
@@ -23,7 +24,7 @@ std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vecto
                 cv::Point classIdPoint;
                 double confidence;
                 minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-                if (confidence > m_config->confidence && classIdPoint.x == PERSON_CLASS) {
+                if (confidence > 0.01f && classIdPoint.x == PERSON_CLASS) {
                     int centerX = (int)(data[0] * frame.cols);
                     int centerY = (int)(data[1] * frame.rows);
                     int width = (int)(data[2] * frame.cols);
@@ -35,11 +36,24 @@ std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vecto
                                               float(top)/m_netSize.height * finalSize.height,
                                               float(width)/m_netSize.width * finalSize.width,
                                               float(height)/m_netSize.height * finalSize.height ));
+
+                    confidences.push_back((float) confidence);
                 }
+
             }
         }
     }
-    return boxes;
+
+    std::vector<int> keptIndices;
+    cv::dnn::NMSBoxes(boxes, confidences, m_config->confidence, 0.1f, keptIndices);
+
+    std::vector<cv::Rect> keptBoxes;
+
+    for (int i : keptIndices) {
+        keptBoxes.push_back(boxes.at(i));
+    }
+
+    return keptBoxes;
 }
 
 BeeNet::BeeNet(const TrackerConfiguration *config) : m_config(config), m_netSize(cv::Size(config->neuralNetQuality, config->neuralNetQuality)) {
