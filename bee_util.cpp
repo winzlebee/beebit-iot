@@ -58,6 +58,8 @@ void loadTrackerConfigMap(const ConfigMap &config) {
                 conf.configLocation = pair.second;
             } else if (pair.first == "confidence") {
                 conf.confidence = stof(pair.second);
+            } else if (pair.first == "nmsThreshold") {
+                conf.nmsThreshold = stof(pair.second);
             } else if (pair.first == "skipFrames") {
                 conf.skipFrames = stoi(pair.second);
             } else if (pair.first == "imageWidth") {
@@ -110,6 +112,7 @@ void writeTrackerConfigFile() {
     outFile << "model=" << conf.modelLocation << std::endl;
     outFile << "config=" << conf.configLocation << std::endl;
     outFile << "confidence=" << conf.confidence << std::endl;
+    outFile << "nmsThreshold=" << conf.nmsThreshold << std::endl;
     outFile << "skipFrames=" << conf.skipFrames << std::endl;
     outFile << "imageWidth=" << conf.imageWidth << std::endl;
     outFile << "imageHeight=" << conf.imageHeight << std::endl;

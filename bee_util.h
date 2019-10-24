@@ -42,6 +42,8 @@ struct TrackerConfiguration {
     int skipFrames = 5;
     // Minimum probability to filter weak detections
     float confidence = 0.2f;
+    // Threshold to cull nearby elements
+    float nmsThreshold = 0.1f;
     // Size of the captured image
     int imageWidth = 320;
     int imageHeight = 240;

@@ -45,7 +45,7 @@ std::vector<cv::Rect> BeeNet::blobToRects(const cv::Mat &frame, const std::vecto
     }
 
     std::vector<int> keptIndices;
-    cv::dnn::NMSBoxes(boxes, confidences, m_config->confidence, 0.1f, keptIndices);
+    cv::dnn::NMSBoxes(boxes, confidences, m_config->confidence, m_config->nmsThreshold, keptIndices);
 
     std::vector<cv::Rect> keptBoxes;
 
