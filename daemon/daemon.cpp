@@ -195,7 +195,11 @@ void Daemon::start() {
 
     loadTrackerConfigFile();
     m_peopleCounter = std::make_unique<beebit::PeopleCounter>(cameraIndex, detectFunc);
+
+#ifndef RASPI
     m_peopleCounter->setDebugWindow(true);
+#endif
+
     //peopleCounter.setCountLine(0, 0, 1.0f, 1.0f);
 	
     m_networkThread = std::make_unique<std::thread>(&Daemon::networkThread, this);
