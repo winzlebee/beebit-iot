@@ -88,12 +88,12 @@ def connectToNetwork(network):
     temp_conf_file.write('update_config=1\n')
     temp_conf_file.write('\n')
     temp_conf_file.write('network={\n')
-    temp_conf_file.write('	ssid="' + network.ssid + '"\n')
+    temp_conf_file.write('	ssid="' + network['ssid'] + '"\n')
 
-    if network.passcode == '':
+    if network['ssid'] == '':
         temp_conf_file.write('	key_mgmt=NONE\n')
     else:
-        temp_conf_file.write('	psk="' + network.passcode + '"\n')
+        temp_conf_file.write('	psk="' + network['ssid']+ '"\n')
 
     temp_conf_file.write('	}')
 
