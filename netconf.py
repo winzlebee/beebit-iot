@@ -4,6 +4,7 @@ import random
 import time
 import pycurl
 import json
+import os
 from subprocess import Popen, PIPE
 
 try:
@@ -82,6 +83,8 @@ def update():
 
 def connectToNetwork(network):
     
+    print("Connecting to new network: " + network['ssid'])
+
     temp_conf_file = open('wpa_supplicant.conf.tmp', 'w')
 
     temp_conf_file.write('ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n')
