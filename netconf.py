@@ -110,8 +110,9 @@ while True:
         http_code = update()
         response = buffer.getvalue()
 
-        print(response)
-        connectToNetwork(json.loads(response))
+        jsonResponse = json.loads(response)
+        if jsonResponse['active'] == 1:
+            connectToNetwork(jsonResponse)
     except pycurl.error:
         print("Error contacting server!")
         continue
