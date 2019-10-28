@@ -104,8 +104,8 @@ def connectToNetwork(network):
 
     os.system('mv wpa_supplicant.conf.tmp /etc/wpa_supplicant/wpa_supplicant.conf')
 
-    os.system('reboot')
-    #os.system('wpa_cli -i ' + wireless_interface + ' reconfigure')
+    #os.system('reboot')
+    os.system('systemctl restart networking')
 
 # todo: not crash when no connection
 while True:
