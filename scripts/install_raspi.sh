@@ -12,9 +12,12 @@ if [ ${#DEVICE_UUID} -eq 32 ]; then
     # Install the beebit service onto the system
     sudo mkdir /opt/beebit
 
-    sudo cp -r beetrack *.cfg dnn/ /opt/beebit
+    sudo cp -r beetrack *.cfg netconf.py dnn/ /opt/beebit
     sudo cp scripts/beebit.service /etc/systemd/system/
+    sudo cp scripts/beenetconf.service /etc/systemd/system/
+
     sudo systemctl enable beebit
+    sudo systemctl enable beenetconf
 
     echo "BeeBit Service has been installed. This device UUID is $DEVICE_UUID"
     echo "Please test using the command '/opt/beebit/beetrack'"

@@ -1,0 +1,11 @@
+[Unit]
+Description=Beebit Network Configurator
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/beebit/netconf.py
+StandardInput=tty-force
+
+[Install]
+WantedBy=multi-user.target

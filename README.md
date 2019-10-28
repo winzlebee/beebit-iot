@@ -34,6 +34,8 @@ make depsPi
 sudo make install
 ```
 
+The *netconf.py* script is also installed as a service. The purpose of this script is to allow configuration of wireless networks on the device remotely, from the convenient web user interface. Rest assured the netconf script will not hijack network connections - it instead works by injecting information about available networks into **wpa_supplicant.conf**
+
 #### Uninstallation
 The pi installation can be reversed with
 ```bash

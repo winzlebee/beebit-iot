@@ -15,7 +15,7 @@ except ImportError:
     from urllib import urlencode
     from StringIO import StringIO as BytesIO
 
-# update interval in minutes this would be read from a config file
+# Minute interval to update network settings
 update_interval = 0.1
 
 # The UUID is initialized from the device configuration
@@ -23,7 +23,6 @@ uuid = 'invalid'
 
 # The idea is there will be more entry points for things like bee/camerafeed ..etc
 base = 'http://localhost:3420/'
-netupdate_url = base + 'bee/network'
 
 # Read the UUID from the beemon file
 beemon = open("beemon.cfg", 'r')
@@ -39,6 +38,7 @@ for line in beemon:
 print("UUID: " + uuid)
 print("Endpoint: " + base)
 
+netupdate_url = base + '/bee/network'
 wireless_interface = 'wlxacf1df10afba'
 
 def update():
@@ -51,7 +51,7 @@ def update():
 
     # Get the available networks and send their SSID and type
     settingLine = True
-    pipe = Popen("iwlist wlxacf1df10afba s | grep -E 'SSID|Encryption'", shell=True, stdout=PIPE)
+    pipe = Popen("iwlist " + wireless_interface + " s | grep -E 'SSID|Encryption'", shell=True, stdout=PIPE)
 
     for index, line in enumerate(pipe.stdout):
         if not settingLine:
@@ -80,6 +80,29 @@ def update():
     return http_response_code
 
 
+def connectToNetwork(network):
+    
+    temp_conf_file = open('wpa_supplicant.conf.tmp', 'w')
+
+    temp_conf_file.write('ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n')
+    temp_conf_file.write('update_config=1\n')
+    temp_conf_file.write('\n')
+    temp_conf_file.write('network={\n')
+    temp_conf_file.write('	ssid="' + network.ssid + '"\n')
+
+    if network.passcode == '':
+        temp_conf_file.write('	key_mgmt=NONE\n')
+    else:
+        temp_conf_file.write('	psk="' + network.passcode + '"\n')
+
+    temp_conf_file.write('	}')
+
+    temp_conf_file.close
+
+    os.system('mv wpa_supplicant.conf.tmp /etc/wpa_supplicant/wpa_supplicant.conf')
+
+    os.system('wpa_cli -i ' + wireless_interface + ' reconfigure')
+
 # todo: not crash when no connection
 while True:
     try:
@@ -88,6 +111,7 @@ while True:
         response = buffer.getvalue()
 
         print(response)
+        connectToNetwork(json.loads(response))
     except pycurl.error:
         print("Error contacting server!")
         continue

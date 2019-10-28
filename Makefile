@@ -32,6 +32,9 @@ base64.o : util/base64.h
 install: raspi
 	bash ./scripts/install_raspi.sh
 
+update: raspi
+	bash ./scripts/update_raspi.sh
+
 uninstall:
 	bash ./scripts/uninstall_raspi.sh
 
