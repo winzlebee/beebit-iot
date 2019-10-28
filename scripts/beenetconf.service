@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+WorkingDirectory=/opt/beebit
 ExecStart=/usr/bin/python3 /opt/beebit/netconf.py
 StandardInput=tty-force
 

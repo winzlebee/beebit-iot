@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+WorkingDirectory=/opt/beebit
 ExecStart=/opt/beebit/beetrack
 Restart=always
 RestartSec=1
