@@ -87,8 +87,6 @@ def connectToNetwork(network):
 
     temp_conf_file = open('wpa_supplicant.conf.tmp', 'w')
 
-    temp_conf_file.write('ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n')
-    temp_conf_file.write('update_config=1\n')
     temp_conf_file.write('\n')
     temp_conf_file.write('network={\n')
     temp_conf_file.write('	ssid="' + network['ssid'] + '"\n')
@@ -102,11 +100,10 @@ def connectToNetwork(network):
 
     temp_conf_file.close
 
-    os.system('mv wpa_supplicant.conf.tmp /etc/wpa_supplicant/wpa_supplicant.conf')
+    os.system('cat wpa_supplicant.conf.tmp >> /etc/wpa_supplicant/wpa_supplicant.conf')
 
     os.system('reboot')
 
-# todo: not crash when no connection
 while True:
     try:
         buffer = BytesIO()
