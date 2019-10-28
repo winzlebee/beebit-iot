@@ -39,7 +39,7 @@ print("UUID: " + uuid)
 print("Endpoint: " + base)
 
 netupdate_url = base + '/bee/network'
-wireless_interface = 'wlxacf1df10afba'
+wireless_interface = 'wlan0'
 
 def update():
     c = pycurl.Curl()

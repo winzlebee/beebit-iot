@@ -6,6 +6,8 @@ sudo apt install libjpeg-dev libpng-dev -y
 sudo apt install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
 sudo apt install libxvidcore-dev libx264-dev -y
 
+sudo pip3 install pycurl
+
 mkdir raspi_install && cd raspi_install
 WORKING_DIRECTORY=`pwd`
 

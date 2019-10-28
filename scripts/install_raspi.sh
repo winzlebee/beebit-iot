@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BEARER_KEY="2%qH3n\$d2z^SS-aV"
-ENDPOINT="http://localhost:3420/bee/manufacture"
+ENDPOINT="http://app.beebithive.com/bee/manufacture"
 
 # Use the web api to get a new registration UUID for this device. Remember to send auth token with the request
 DEVICE_UUID=`curl -s -H "Authorization: Bearer $BEARER_KEY" -X POST $ENDPOINT`
