@@ -1,10 +1,13 @@
 # Install all dependencies required by OpenCV
+sudo apt update
 sudo apt install libcurl4-openssl-dev build-essential libgtk2.0-dev -y
 sudo apt install libgtk-3-dev libcanberra-gtk3-dev -y
 sudo apt install libtiff-dev zlib1g-dev -y
 sudo apt install libjpeg-dev libpng-dev -y
 sudo apt install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
 sudo apt install libxvidcore-dev libx264-dev -y
+sudo apt install cmake -y
+sudo apt install python3 python3-pip -y
 
 sudo pip3 install pycurl
 
